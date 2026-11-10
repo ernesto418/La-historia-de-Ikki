@@ -1,0 +1,1575 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ikki · La rebelión de Kawamura</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@600;800&family=Noto+Serif:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Yuji+Syuku&text=%E4%B8%80%E6%8F%86%E4%BA%8C%E4%B8%89%E5%9B%9B%E4%BA%94%E5%85%AD%E4%B8%83%E5%85%AB%E4%B9%9D%E5%8D%81%E5%8C%97%E6%A7%8D%E5%BC%93%E9%8A%83%E5%88%80%E8%96%99%E9%A8%8E%E5%B0%86%E5%83%A7%E6%B2%B3%E6%9D%91&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1f1913; --paper:#f1e6cc; --paper2:#e5d5b0; --red:#b3362b; --red2:#7e2119;
+  --gold:#c9a24a; --muted:#7a6a55; --night:#15110d; --line:#2a1d14;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{background:var(--night);color:var(--paper);font-family:'Noto Serif',Georgia,serif;-webkit-tap-highlight-color:transparent;overscroll-behavior-y:none}
+button{font:inherit;cursor:pointer;color:inherit}
+.h{font-family:'Shippori Mincho','Noto Serif',serif}
+.k{font-family:'Yuji Syuku','Shippori Mincho',serif}
+.screen{display:none;position:relative;min-height:100vh;min-height:100dvh}
+.screen.active{display:block}
+.btn{background:var(--red);color:#fff6e6;border:0;border-radius:4px;padding:13px 22px;font-weight:700;letter-spacing:.03em;box-shadow:0 3px 0 var(--red2);font-size:16px}
+.btn:active{transform:translateY(2px);box-shadow:0 1px 0 var(--red2)}
+.btn.alt{background:transparent;color:inherit;border:1.5px solid currentColor;box-shadow:none;opacity:.85}
+.btn.gold{background:var(--gold);color:var(--ink);box-shadow:0 3px 0 #8a6d2a}
+.btn.small{padding:8px 12px;font-size:14px}
+.iconbtn{background:transparent;border:1px solid #efe4c944;border-radius:4px;padding:7px 10px;font-size:14px;color:var(--paper)}
+
+/* ---------- escenas ---------- */
+.scene-bg{position:absolute;inset:0;overflow:hidden}
+.scene-bg>svg{position:absolute;inset:0;width:100%;height:100%}
+.fx{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.fx i{position:absolute;top:-4%;display:block;animation:fall linear infinite}
+.fx.otono i{width:11px;height:7px;border-radius:70% 0;background:#c4572a}
+.fx.otono i:nth-child(3n){background:#d9902e}
+.fx.invierno i{width:6px;height:6px;border-radius:50%;background:#fff;opacity:.85}
+.fx.primavera i{width:9px;height:7px;border-radius:60% 10%;background:#f2bccb}
+.fx.verano i{width:4px;height:4px;border-radius:50%;background:#f7e58a;box-shadow:0 0 8px 2px #f7e58a99;top:auto;bottom:-4%;animation-name:rise}
+@keyframes fall{0%{transform:translate(0,0) rotate(0)}100%{transform:translate(-80px,108vh) rotate(600deg)}}
+@keyframes rise{0%{transform:translate(0,0);opacity:0}20%{opacity:1}100%{transform:translate(30px,-70vh);opacity:0}}
+
+/* ---------- portada ---------- */
+#s-splash .over,#s-title .over{background:radial-gradient(ellipse at 50% 55%,#000a 0%,#0000 65%);position:relative;z-index:2;min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px 20px 40px}
+.stamp{width:150px;height:150px;border-radius:12px;background:var(--red);display:flex;align-items:center;justify-content:center;color:#f7ead0;font-size:74px;line-height:1;box-shadow:0 0 0 4px #f1e6cc22,0 10px 30px #0008;transform:rotate(-4deg);writing-mode:vertical-rl;letter-spacing:-.05em}
+#s-splash h1,#s-title h1{font-size:44px;margin:22px 0 2px;letter-spacing:.18em;color:#fff3dc;text-shadow:0 2px 10px #000a}
+#s-splash .sub,#s-title .sub{font-size:19px;margin:0 0 30px;color:#f1e6cc;text-shadow:0 2px 8px #000}
+#s-splash{cursor:pointer;user-select:none;-webkit-user-select:none}
+#s-splash .stamp{width:180px;height:180px;font-size:90px}
+#s-splash h1{font-size:56px}
+#s-splash .press{margin:34px 0 0;font-size:20px;letter-spacing:.14em;text-transform:uppercase;color:#fff3dc;text-shadow:0 2px 10px #000;animation:tapm 1.6s ease-in-out infinite}
+#s-splash.leaving{animation:fadeout .45s ease-in forwards}
+#s-title.active{animation:fadein .6s ease-out}
+@keyframes fadeout{to{opacity:0}}
+@keyframes fadein{from{opacity:0}}
+#s-title .stamp{width:110px;height:110px;font-size:54px}
+#s-title .menu{display:flex;flex-direction:column;gap:12px;width:min(300px,90%)}
+#s-title .note{margin-top:26px;font-size:13px;opacity:.75;max-width:340px;text-shadow:0 1px 4px #000}
+
+/* ---------- diálogo ---------- */
+#s-dialog{overflow:hidden;cursor:pointer;user-select:none;-webkit-user-select:none;background:#120e0a}
+#s-dialog .scene-bg{bottom:170px}
+#s-dialog .scene-bg::after{content:"";position:absolute;left:0;right:0;bottom:0;height:60px;background:linear-gradient(transparent,#120e0a)}
+.dtop{position:absolute;top:12px;right:12px;z-index:5;display:flex;gap:8px;align-items:center}
+#s-dialog .skip{background:#0007;border:1px solid #fff4;color:#fff;border-radius:20px;padding:6px 14px;font-size:14px}
+.mbtn{background:#0007;border:1px solid #fff4;color:#fff;border-radius:20px;width:42px;height:34px;display:inline-flex;align-items:center;justify-content:center;padding:0}
+.mbtn.off{opacity:.65}
+.tapm{margin:18px 0 0;font-size:14px;color:#f7e3b0;text-shadow:0 1px 4px #000;animation:tapm 1.6s ease-in-out infinite}
+.tapm.hide{display:none}
+@keyframes tapm{50%{opacity:.45}}
+.mbtn.float{position:absolute;top:12px;right:12px;z-index:5}
+.map-head .mbtn{background:transparent;border:1px solid #efe4c944;border-radius:4px;width:40px;height:35px}
+.vol{width:100%;accent-color:var(--red)}
+.dlg{position:absolute;left:0;right:0;bottom:0;z-index:3;padding:0 14px 18px;max-width:780px;margin:0 auto}
+.dlg .portrait{width:132px;height:132px;border:3px solid var(--gold);border-radius:6px;overflow:hidden;background:#222;box-shadow:0 6px 20px #000a;margin:0 0 -18px 8px;position:relative;z-index:2}
+.dlg .portrait svg{width:100%;height:100%;display:block}
+.dlg .portrait.in{animation:pin .35s ease-out}
+@keyframes pin{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.dlg .box{background:var(--paper);color:var(--ink);border-radius:6px;padding:26px 18px 30px;min-height:150px;position:relative;box-shadow:0 10px 30px #000b, inset 0 0 0 1px #0002, inset 0 0 0 5px var(--paper), inset 0 0 0 6px #2a1d1433}
+.dlg .name{position:absolute;top:-14px;left:154px;background:var(--red);color:#fff6e6;padding:4px 12px;border-radius:3px;font-weight:700;font-size:16px;box-shadow:0 2px 0 var(--red2)}
+.dlg .role{font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 6px}
+.dlg p{margin:0;font-size:18px;line-height:1.55;min-height:3em}
+.dlg .next{position:absolute;right:16px;bottom:8px;color:var(--red);font-size:14px;animation:bob 1s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(4px)}}
+
+/* ---------- mapa ---------- */
+.map-head{position:sticky;top:0;z-index:6;display:flex;align-items:center;gap:8px;padding:10px 12px;background:#15110df0;border-bottom:1px solid #efe4c922}
+.map-head .ttl{flex:1;min-width:0}
+.map-head .ttl b{font-size:19px;letter-spacing:.08em;display:block}
+.map-head .ttl span{font-size:12.5px;opacity:.75}
+.map-wrap{max-width:720px;margin:0 auto;padding:10px 8px 40px}
+#mapsvg{width:100%;height:auto;display:block;border-radius:4px;box-shadow:0 10px 40px #000c}
+.node{cursor:pointer;outline:none}
+.node.locked{cursor:default}
+.node .halo{animation:pulse 1.8s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+@keyframes pulse{0%,100%{opacity:.35;transform:scale(1)}50%{opacity:1;transform:scale(1.18)}}
+.march{animation:march 1.2s linear infinite}
+@keyframes march{to{stroke-dashoffset:-24}}
+.map-legend{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;font-size:12.5px;opacity:.8;margin:12px 0 0}
+.map-legend i{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:5px;vertical-align:-1px;border:1px solid #0006}
+
+/* ---------- briefing ---------- */
+#s-brief{background:var(--paper);color:var(--ink)}
+.page{max-width:760px;margin:0 auto;padding:0 16px 40px}
+.brief-hero{position:relative;height:190px;overflow:hidden;color:#fff6e6}
+.brief-hero .scene-bg{position:absolute}
+.brief-hero .in{position:absolute;left:0;right:0;bottom:0;padding:14px 16px;background:linear-gradient(transparent,#0009 45%);max-width:760px;margin:0 auto}
+.brief-hero .fase{font-size:13px;letter-spacing:.12em;text-transform:uppercase;opacity:.9}
+.brief-hero h2{margin:2px 0 0;font-size:26px;line-height:1.15;text-shadow:0 2px 8px #000}
+.brief-hero .back{position:absolute;top:10px;left:10px;z-index:3;background:#0007;border:1px solid #fff4;color:#fff;border-radius:20px;padding:6px 12px;font-size:14px}
+.story{font-style:italic;margin:16px 0 12px;font-size:16px;line-height:1.5;color:#3d3125}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 14px}
+.chip{background:#2a1d140f;border:1px solid #2a1d1430;border-radius:20px;padding:4px 11px;font-size:13.5px}
+.res{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 10px}
+.res .card{background:#fff8e8;border:1px solid #2a1d1430;border-radius:6px;padding:10px 12px}
+.res .card small{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.res .card b{font-size:24px}
+.res .card em{display:block;font-style:normal;font-size:12.5px;color:#5a4a38;margin-top:2px}
+.balance{background:#fff8e8;border:1px solid #2a1d1430;border-radius:6px;padding:10px 12px;margin:0 0 10px;font-size:13.5px}
+.bar{height:10px;border-radius:5px;background:#2a1d1415;margin:5px 0 7px;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:5px}
+.rule{background:#b3362b14;border-left:4px solid var(--red);padding:9px 12px;border-radius:0 6px 6px 0;margin:0 0 8px;font-size:14.5px}
+.sec{margin:22px 0 8px;font-size:19px;display:flex;align-items:baseline;gap:10px;border-bottom:2px solid #2a1d1422;padding-bottom:5px}
+.sec small{font-family:'Noto Serif',serif;font-size:13px;color:var(--muted);font-weight:400}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(98px,1fr));gap:9px}
+.ucard{position:relative;display:flex;flex-direction:column;justify-content:flex-start;align-items:stretch;background:#2a1d14;border:0;border-radius:6px;padding:0 0 7px;text-align:center;color:#f1e6cc;box-shadow:0 3px 8px #0003;overflow:hidden}
+.ucard .art{position:relative;aspect-ratio:3/4;overflow:hidden;background:#3a2c20}
+.ucard .art svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.art img.pic{position:absolute;left:4%;top:4%;width:92%;height:92%;object-fit:contain;display:block;opacity:0;transition:opacity .3s;filter:drop-shadow(0 3px 6px #0006)}
+.art.has-img img.pic{opacity:1}
+.art.has-img .fig{display:none}
+.ucard .n{font-weight:700;font-size:12.5px;line-height:1.2;margin:6px 5px 0}
+.ucard .e{font-size:11px;opacity:.7;line-height:1.2;margin:2px 5px 0}
+.ucard .cnt{position:absolute;top:6px;right:6px;background:var(--red);color:#fff;font-weight:700;border-radius:12px;padding:1px 8px;font-size:14px;box-shadow:0 2px 4px #0006}
+.ucard .new{position:absolute;top:6px;left:6px;background:var(--gold);color:var(--ink);font-weight:700;border-radius:3px;padding:1px 6px;font-size:10.5px;letter-spacing:.05em}
+.ucard.locked{filter:grayscale(1) brightness(.45)}
+.ucard.enemy{background:#3b1512}
+.hint{background:#2a1d140c;border:1px dashed #2a1d1450;border-radius:6px;padding:12px 14px;margin:16px 0 0}
+.hint summary,.howto summary{cursor:pointer;font-weight:700}
+.hint p{margin:8px 0 0;font-style:italic}
+.howto{margin:12px 0 0;background:#2a1d140c;border-radius:6px;padding:12px 14px}
+.howto ol{margin:8px 0 0;padding-left:20px;font-size:14.5px;line-height:1.55}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin:22px 0 0}
+.actions .btn{flex:1 1 140px}
+
+/* ---------- desbloqueo / fin ---------- */
+#s-unlock,#s-end{overflow:hidden}
+.center{position:relative;z-index:2;min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px 18px}
+.center h2{font-size:30px;margin:0 0 6px;text-shadow:0 2px 10px #000}
+.center p{max-width:460px;font-size:17px;line-height:1.5;text-shadow:0 1px 6px #000}
+.unlock-cards{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin:18px 0 24px}
+.unlock-cards .ucard{width:140px;animation:flip .8s cubic-bezier(.2,.8,.3,1.2) both}
+.unlock-cards .ucard:nth-child(2){animation-delay:.25s}
+@keyframes flip{from{transform:rotateY(90deg) scale(.7);opacity:0}to{transform:none;opacity:1}}
+
+/* ---------- modal ---------- */
+.modal{position:fixed;inset:0;z-index:50;background:#000b;display:flex;align-items:flex-end;justify-content:center}
+.modal.hidden{display:none}
+.sheet{background:var(--paper);color:var(--ink);width:100%;max-width:640px;max-height:88dvh;overflow:auto;border-radius:12px 12px 0 0;padding:18px 16px 26px;position:relative;animation:up .25s ease-out}
+@media(min-width:700px){.modal{align-items:center}.sheet{border-radius:10px}}
+@keyframes up{from{transform:translateY(40px);opacity:.5}}
+.sheet .x{position:absolute;top:10px;right:10px;background:#2a1d1414;border:0;border-radius:50%;width:34px;height:34px;font-size:18px}
+.sheet h3{margin:0 40px 10px 0;font-size:21px}
+.sheet p{line-height:1.5}
+.udetail{display:flex;gap:14px;align-items:flex-start}
+.udetail .art{flex:0 0 120px;aspect-ratio:3/4;position:relative;border-radius:6px;overflow:hidden;background:#3a2c20}
+.udetail .art svg{position:absolute;inset:0;width:100%;height:100%}
+.seg{display:flex;gap:6px;margin:6px 0 14px}
+.seg button{flex:1;border:1.5px solid var(--ink);background:transparent;border-radius:4px;padding:9px 0;font-weight:700;color:var(--ink)}
+.seg button.on{background:var(--ink);color:var(--paper)}
+.set{border-top:1px solid #2a1d1425;padding:14px 0 4px}
+.set h4{margin:0 0 6px;font-size:16px}
+.set p{margin:0 0 10px;font-size:14px;color:#4a3c2e}
+.filebtn{display:inline-block;position:relative;overflow:hidden}
+.set .btn.small{vertical-align:middle;margin:0 4px 4px 0}
+.set .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0 0}
+.set .row .btn{margin:0}
+.chk{display:flex;gap:8px;align-items:center;font-size:14px;margin:0 0 4px}
+.paste{margin:10px 0 0;font-size:14px}
+.paste summary{cursor:pointer;color:#4a3c2e}
+.paste textarea,.imgstat textarea{width:100%;margin:8px 0;font:12px/1.4 ui-monospace,monospace;border:1px solid #2a1d1440;border-radius:4px;padding:8px;background:#fff8e8;color:var(--ink)}
+.filebtn input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.imgstat{font-size:13px;margin-top:8px;color:#4a3c2e}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#1f1913;color:#f1e6cc;border:1px solid var(--gold);padding:10px 16px;border-radius:6px;z-index:60;font-size:14px;max-width:90%;text-align:center;animation:up .2s}
+</style>
+</head>
+<body>
+
+<!-- PANTALLA DE INICIO -->
+<section id="s-splash" class="screen" role="button" tabindex="0" aria-label="Pulsa para comenzar">
+  <div class="scene-bg" id="splash-scene"></div>
+  <div class="over">
+    <div class="stamp k">一揆</div>
+    <h1 class="h">IKKI</h1>
+    <p class="sub h">La rebelión de Kawamura</p>
+    <p class="press h">Pulsa para comenzar</p>
+  </div>
+</section>
+
+<!-- MENÚ PRINCIPAL -->
+<section id="s-title" class="screen">
+  <div class="scene-bg" id="title-scene"></div>
+  <button class="mbtn float"></button>
+  <div class="over">
+    <div class="stamp k">一揆</div>
+    <h1 class="h">IKKI</h1>
+    <p class="sub h">La rebelión de Kawamura</p>
+    <div class="menu">
+      <button class="btn" id="b-new">Nueva partida</button>
+      <button class="btn gold" id="b-cont" style="display:none">Continuar</button>
+      <button class="btn alt" id="b-set1">Ajustes y coop</button>
+    </div>
+    <p class="tapm" id="tap-music">♪ Toca la pantalla para activar la música</p>
+    <p class="note">Campaña de batallas para Total War: Shogun 2. Cada fase te dice qué ejército llevar y contra qué luchas; la batalla la juegas en Batalla personalizada.</p>
+  </div>
+</section>
+
+<!-- DIÁLOGO -->
+<section id="s-dialog" class="screen">
+  <div class="scene-bg" id="dlg-scene"></div>
+  <div class="dtop"><button class="mbtn"></button><button class="skip" id="dlg-skip">Saltar ››</button></div>
+  <div class="dlg">
+    <div class="portrait" id="dlg-portrait"></div>
+    <div class="box">
+      <div class="name"><span id="dlg-name"></span></div>
+      <div class="role" id="dlg-role"></div>
+      <p id="dlg-text"></p>
+      <div class="next">▼</div>
+    </div>
+  </div>
+</section>
+
+<!-- MAPA -->
+<section id="s-map" class="screen">
+  <div class="map-head">
+    <div class="ttl"><b class="h">IKKI <span class="k" style="opacity:1;font-size:16px">一揆</span></b><span id="map-progress"></span></div>
+    <button class="iconbtn mbtn"></button>
+    <button class="iconbtn" id="b-army">Ejército</button>
+    <button class="iconbtn" id="b-set2" aria-label="Ajustes">⚙</button>
+  </div>
+  <div class="map-wrap">
+    <div id="map"></div>
+    <div class="map-legend"><span><i style="background:#b3362b"></i>Conquistada</span><span><i style="background:#f4ead2;box-shadow:0 0 0 2px #c9a24a"></i>Siguiente</span><span><i style="background:#8a8170"></i>Bloqueada</span></div>
+  </div>
+</section>
+
+<!-- BRIEFING -->
+<section id="s-brief" class="screen"></section>
+
+<!-- DESBLOQUEO -->
+<section id="s-unlock" class="screen"></section>
+
+<!-- FIN -->
+<section id="s-end" class="screen"></section>
+
+<div id="modal" class="modal hidden"><div class="sheet" id="sheet"></div></div>
+
+<script>const DATA = {"_nota": "Datos del juego 'Ikki'. Los nombres de unidad son los del juego (Shogun 2 base, sin DLC). 'coste' es el coste de reclutamiento en campaña según shogun2-encyclopedia.com; los marcados con coste_estimado=true son aproximados. En batalla personalizada los costes pueden variar: los fondos de cada fase hay que ajustarlos al probar. 'unidades_disponibles' = iniciales + todo lo desbloqueado antes. 'desbloquea' se gana al vencer la fase.", "titulo": "Ikki", "subtitulo": "La rebelión de Kawamura", "reglas_generales": {"max_unidades_por_ejercito": 20, "el_general_enemigo_siempre_a_caballo": true, "el_general_del_jugador_siempre_disponible": true, "dificultad_recomendada": "Difícil", "coop": "Los fondos y el límite de unidades del jugador se reparten entre los jugadores"}, "unidades": {"General": {"es": "General a caballo", "tipo": "general", "clase": "general", "coste": null, "clave": "general", "img": null, "descripcion": "El jefe del ejército y su guardia montada. Si cae, la moral de todo el ejército se desploma. Siempre a caballo."}, "Yari Ashigaru": {"es": "Lanceros ashigaru", "tipo": "lanza", "clase": "ashigaru", "coste": 250, "clave": "inf_spear_yari_ashigaru", "img": "https://shogun2-encyclopedia.com/content_images/units/icons/ashigaru_inf_yari_ashigaru.png", "descripcion": "Campesinos con lanza larga. Baratos y frágiles, pero en formación cerrada frenan a la caballería."}, "Bow Ashigaru": {"es": "Arqueros ashigaru", "tipo": "arco", "clase": "ashigaru", "coste": 350, "clave": "inf_missile_bow_ashigaru", "img": "https://shogun2-encyclopedia.com/content_images/units/icons/ashigaru_inf_bow_ashigaru.png", "descripcion": "Arqueros baratos. Desgastan al enemigo a distancia, pero huyen en cuerpo a cuerpo."}, "Matchlock Ashigaru": {"es": "Arcabuceros ashigaru", "tipo": "arcabuz", "clase": "ashigaru", "coste": 450, "coste_estimado": true, "clave": "inf_missile_matchlock_ashigaru", "img": "https://shogun2-encyclopedia.com/content_images/units/icons/ashigaru_inf_matchlock_ashigaru.png", "descripcion": "Armas de fuego llegadas de Europa. Poco alcance y recarga lenta, pero cada descarga asusta y atraviesa armaduras. La lluvia las inutiliza."}, "Yari Samurai": {"es": "Samuráis con lanza", "tipo": "lanza", "clase": "samurai", "coste": 700, "clave": "inf_spear_yari_samurai", "img": "https://shogun2-encyclopedia.com/content_images/units/icons/samurai_inf_yari_samurai.png", "descripcion": "Lanceros profesionales. Más duros y disciplinados que los ashigaru. Buenos contra caballería."}, "Bow Samurai": {"es": "Samuráis arqueros", "tipo": "arco", "clase": "samurai", "coste": 800, "coste_estimado": true, "clave": "inf_missile_bow_samurai", "img": "https://shogun2-encyclopedia.com/content_images/units/icons/samurai_inf_bow_samurai.png", "descripcion": "Arqueros de élite con mejor puntería y alcance. Aguantan algo en cuerpo a cuerpo."}, "Katana Samurai": {"es": "Samuráis con katana", "tipo": "katana", "clase": "samurai", "coste": 750, "clave": "inf_sword_katana_samurai", "img": "https://shogun2-encyclopedia.com/content_images/units/icons/samurai_inf_katana_samurai.png", "descripcion": "Espadachines letales en cuerpo a cuerpo. Destrozan lanceros, pero sufren contra caballería y flechas."}, "No-Dachi Samurai": {"es": "Samuráis con no-dachi", "tipo": "nodachi", "clase": "samurai", "coste": 800, "coste_estimado": true, "clave": "inf_sword_nodachi_samurai", "img": "https://shogun2-encyclopedia.com/content_images/units/icons/samurai_inf_nodachi_samurai.png", "descripcion": "Espadas enormes y casi sin armadura. Una carga devastadora que rompe líneas, pero caen rápido bajo las flechas."}, "Naginata Samurai": {"es": "Samuráis con naginata", "tipo": "naginata", "clase": "samurai", "coste": 800, "coste_estimado": true, "clave": "inf_heavy_naginata_samurai", "img": "https://shogun2-encyclopedia.com/content_images/units/icons/samurai_inf_naginata_samurai.png", "descripcion": "Infantería pesada con mucha armadura. Aguanta flechas y sirve contra caballería."}, "Naginata Warrior Monks": {"es": "Monjes guerreros", "tipo": "naginata", "clase": "monje", "coste": 900, "clave": "inf_heavy_naginata_warrior_monks", "img": "https://shogun2-encyclopedia.com/content_images/units/icons/ashigaru_inf_naginata_warrior_monks.png", "descripcion": "Fanáticos con naginata. Atacan con una furia enorme y asustan al enemigo, pero llevan poca armadura."}, "Yari Cavalry": {"es": "Caballería con lanza", "tipo": "lanza", "clase": "caballeria", "coste": 650, "coste_estimado": true, "clave": "cav_spear_yari_cavalry", "img": "https://shogun2-encyclopedia.com/content_images/units/icons/samurai_cav_yari_cavalry.png", "descripcion": "Jinetes rápidos con lanza. Cargas fuertes y buenos para cazar a otra caballería."}, "Bow Cavalry": {"es": "Arqueros a caballo", "tipo": "arco", "clase": "caballeria", "coste": 750, "clave": "cav_missile_bow_cavalry", "img": "https://shogun2-encyclopedia.com/content_images/units/icons/samurai_cav_bow_cavalry.png", "descripcion": "Disparan en movimiento. Débiles en cuerpo a cuerpo: dispara, retrocede y repite. Contra infantería lenta y sin arcos son imparables."}, "Katana Cavalry": {"es": "Caballería con katana", "tipo": "katana", "clase": "caballeria", "coste": 950, "clave": "cav_sword_katana_cavalry", "img": "https://shogun2-encyclopedia.com/content_images/units/icons/samurai_cav_katana_cavalry.png", "descripcion": "Jinetes pesados de élite. Muy fuertes en el cuerpo a cuerpo y en cargas por la retaguardia."}}, "personajes": {"haru": {"nombre": "Abuela Haru", "rol": "Anciana de Kawamura", "retrato": {"edad": "anciano", "piel": "#e2b98f", "pelo": "mono", "color_pelo": "#d9d4cc", "ropa": "#5b6e8c", "ropa2": "#2f3b52", "barba": "ninguna", "expresion": "serena", "fondo": "#c9a24a", "femenino": true}}, "genjiro": {"nombre": "Genjiro", "rol": "Ronin", "retrato": {"edad": "adulto", "piel": "#d9a77a", "pelo": "chonmage", "color_pelo": "#1d1a18", "ropa": "#4a4a46", "ropa2": "#22221f", "barba": "incipiente", "cicatriz": true, "expresion": "severa", "fondo": "#7d8a6a"}}, "enkai": {"nombre": "Abad Enkai", "rol": "Monje guerrero", "retrato": {"edad": "adulto", "piel": "#d8a679", "pelo": "calvo", "ropa": "#d9d2c3", "ropa2": "#8a3b24", "barba": "ninguna", "expresion": "serena", "fondo": "#a8794a", "accesorio": "rosario", "sombrero": "capucha"}}, "kaede": {"nombre": "Kaede", "rol": "Jefa de los jinetes", "retrato": {"edad": "joven", "piel": "#d6a274", "pelo": "coleta", "color_pelo": "#241a14", "ropa": "#8a5a2b", "ropa2": "#3d2a17", "barba": "ninguna", "expresion": "sonrisa", "fondo": "#7aa0a8", "sombrero": "hachimaki", "femenino": true, "accesorio": "arco"}}, "sato": {"nombre": "Maestro Sato", "rol": "Maestro de kyudo", "retrato": {"edad": "anciano", "piel": "#dcae84", "pelo": "chonmage", "color_pelo": "#9b958c", "ropa": "#ece6d6", "ropa2": "#2a2a35", "barba": "perilla", "expresion": "serena", "fondo": "#8fa07a"}}, "hosokawa": {"nombre": "Señor Hosokawa", "rol": "Señor feudal", "retrato": {"edad": "adulto", "piel": "#e0b48a", "pelo": "chonmage", "color_pelo": "#141210", "ropa": "#7b1e1e", "ropa2": "#2a0c0c", "barba": "bigote", "expresion": "cruel", "fondo": "#5a2a22", "sombrero": "kabuto"}}, "mendes": {"nombre": "Capitán Mendes", "rol": "Comerciante nanban", "retrato": {"edad": "adulto", "piel": "#ecc4a0", "pelo": "corto", "color_pelo": "#6b3e1f", "ropa": "#2e3f5c", "ropa2": "#c9a24a", "barba": "barba", "color_barba": "#6b3e1f", "expresion": "sonrisa", "fondo": "#5c8aa0", "sombrero": "europeo"}}, "ishida": {"nombre": "Maestro Ishida", "rol": "Maestro del dojo", "retrato": {"edad": "anciano", "piel": "#d9ab80", "pelo": "canoso", "color_pelo": "#eeeeea", "ropa": "#2b3a4a", "ropa2": "#ece6d6", "barba": "blanca", "expresion": "severa", "fondo": "#9aa7b4"}}, "kuroda": {"nombre": "General Kuroda", "rol": "General del daimyo", "retrato": {"edad": "adulto", "piel": "#d4a072", "pelo": "chonmage", "color_pelo": "#141210", "ropa": "#1d1d24", "ropa2": "#7b1e1e", "barba": "ninguna", "expresion": "cruel", "fondo": "#3a3a44", "sombrero": "kabuto", "mascara": true}}, "matsunaga": {"nombre": "Daimyo Matsunaga", "rol": "Señor de la provincia", "retrato": {"edad": "anciano", "piel": "#e6bf98", "pelo": "chonmage", "color_pelo": "#4a4743", "ropa": "#4b2a6b", "ropa2": "#c9a24a", "barba": "perilla", "expresion": "cruel", "fondo": "#3c2a4a", "accesorio": "abanico"}}}, "unidades_iniciales": ["Yari Ashigaru"], "prologo": [{"p": "haru", "t": "Hace muchos inviernos, cuando Japón ardía en guerras, nuestra aldea de Kawamura solo quería cultivar arroz en paz."}, {"p": "haru", "t": "Pero el señor Hosokawa decidió que el arroz era suyo. Y también nuestros hijos, para sus guerras."}, {"p": "haru", "t": "Cada otoño subía los impuestos. Quien no podía pagar acababa colgado de los cerezos del camino."}, {"p": "haru", "t": "Entonces llegaste tú. Un forastero con más valor que soldados."}, {"p": "haru", "t": "Esta es la historia de cómo unas pocas lanzas de campesinos hicieron caer a un daimyo."}], "epilogo": [{"p": "haru", "t": "Y así cayó el castillo de Matsunaga."}, {"p": "haru", "t": "Las tierras volvieron a quienes las trabajaban, y en los cerezos del camino solo volvieron a colgar flores."}, {"p": "kaede", "t": "Cada primavera bajamos a Kawamura a beber sake con los campesinos. Dicen que aún brindan por ti."}, {"p": "haru", "t": "Fin. Gracias por escuchar a esta vieja."}], "dialogo_derrota": [{"p": "haru", "t": "No pasa nada. Hasta el río más bravo tiene que rodear la roca. Descansa y vuelve a intentarlo."}], "fases": [{"id": 1, "titulo": "La aldea de Kawamura", "lugar": "aldea", "mapa": {"x": 300, "y": 1035, "etiqueta": "Kawamura"}, "historia": "Un recaudador del señor Hosokawa y su escolta saquean la aldea. Los campesinos cogen sus lanzas y te piden que los guíes.", "dialogo_intro": [{"p": "haru", "t": "¡Ya vienen! El recaudador y su escolta. Solo tenemos unas lanzas viejas y mucha rabia."}, {"p": "haru", "t": "No son muchos. Si cae el jinete que los manda, los demás saldrán corriendo."}], "dialogo_victoria": [{"p": "haru", "t": "¡Han huido! Los cazadores de la aldea han visto lo que has hecho. Quieren luchar contigo."}], "condiciones": {"estacion": "Otoño", "hora": "Día", "tipo": "Campo abierto"}, "jugador": {"fondos": 1000, "max_unidades": 3, "unidades_disponibles": ["Yari Ashigaru"]}, "enemigo": [{"unidad": "General", "cantidad": 1}, {"unidad": "Yari Ashigaru", "cantidad": 2}, {"unidad": "Bow Ashigaru", "cantidad": 1}], "pista": "Mantén a tus lanceros juntos y ve a por el jinete: si su general cae, los ashigaru huyen.", "desbloquea": {"unidades": ["Bow Ashigaru"], "motivo": "Los cazadores de la aldea se unen a ti con sus arcos."}}, {"id": 2, "titulo": "El paso de los bandidos", "lugar": "paso", "mapa": {"x": 140, "y": 905, "etiqueta": "El paso"}, "historia": "Para llegar al valle hay que cruzar un paso controlado por bandidos. Un ronin, Genjiro, lleva semanas cazándolos solo con sus hombres.", "dialogo_intro": [{"p": "genjiro", "t": "¿Vas al valle? Entonces tendrás que cruzar el paso. Los bandidos cobran peaje... con sangre."}, {"p": "genjiro", "t": "Llevo semanas cazándolos. Demuéstrame que tus campesinos saben luchar y te seguiré."}], "dialogo_victoria": [{"p": "genjiro", "t": "No está mal para unos campesinos. Mi lanza y la de mis hombres son tuyas."}], "condiciones": {"estacion": "Otoño", "hora": "Atardecer", "tipo": "Campo abierto (bosque y desfiladero)"}, "jugador": {"fondos": 1400, "max_unidades": 4, "unidades_disponibles": ["Yari Ashigaru", "Bow Ashigaru"]}, "enemigo": [{"unidad": "General", "cantidad": 1}, {"unidad": "Yari Ashigaru", "cantidad": 3}, {"unidad": "Bow Ashigaru", "cantidad": 2}, {"unidad": "Katana Samurai", "cantidad": 1}], "pista": "Los bandidos se esconden en el bosque. Avanza despacio y no dejes a tus arqueros solos.", "desbloquea": {"unidades": ["Yari Samurai"], "motivo": "Genjiro y sus samuráis de lanza juran seguirte."}}, {"id": 3, "titulo": "El templo profanado", "lugar": "templo", "mapa": {"x": 430, "y": 800, "etiqueta": "El templo"}, "historia": "Los soldados de Hosokawa queman un templo por dar refugio a los campesinos. Los monjes resisten, pero no aguantarán solos.", "dialogo_intro": [{"p": "enkai", "t": "Los soldados de Hosokawa rodean el templo porque dimos refugio a tu gente."}, {"p": "enkai", "t": "Mis monjes rezan con una mano y empuñan la naginata con la otra. Pero solos no resistiremos."}], "dialogo_victoria": [{"p": "enkai", "t": "Buda perdonará lo que hemos hecho hoy. Mis monjes guerreros marcharán contigo."}], "condiciones": {"estacion": "Invierno", "hora": "Día", "tipo": "Campo abierto (colinas)"}, "jugador": {"fondos": 2600, "max_unidades": 6, "unidades_disponibles": ["Yari Ashigaru", "Bow Ashigaru", "Yari Samurai"]}, "enemigo": [{"unidad": "General", "cantidad": 1}, {"unidad": "Yari Ashigaru", "cantidad": 3}, {"unidad": "Yari Samurai", "cantidad": 2}, {"unidad": "Bow Ashigaru", "cantidad": 2}, {"unidad": "Yari Cavalry", "cantidad": 1}], "pista": "Su caballería es poca pero peligrosa: protege los flancos de tus arqueros con lanzas.", "desbloquea": {"unidades": ["Naginata Warrior Monks"], "motivo": "Los monjes guerreros del templo se unen a la causa."}}, {"id": 4, "titulo": "Los jinetes de las llanuras", "lugar": "llanura", "mapa": {"x": 160, "y": 690, "etiqueta": "Las llanuras"}, "historia": "En las llanuras del norte vive un pueblo de jinetes nómadas. Los hombres de Hosokawa vienen a robar sus caballos. Si los defiendes, te enseñarán a luchar a caballo.", "dialogo_intro": [{"p": "kaede", "t": "Forasteros a pie en nuestras llanuras... qué raro."}, {"p": "kaede", "t": "Los hombres de Hosokawa vienen a llevarse nuestros caballos. Si nos ayudas, mi pueblo no lo olvidará."}], "dialogo_victoria": [{"p": "kaede", "t": "Luchas bien... para ir a pie. Toma nuestros caballos. Y lo más valioso que tenemos: nuestros arqueros montados."}], "condiciones": {"estacion": "Primavera", "hora": "Día", "tipo": "Campo abierto (llanura)"}, "jugador": {"fondos": 3800, "max_unidades": 8, "unidades_disponibles": ["Yari Ashigaru", "Bow Ashigaru", "Yari Samurai", "Naginata Warrior Monks"]}, "enemigo": [{"unidad": "General", "cantidad": 1}, {"unidad": "Yari Ashigaru", "cantidad": 4}, {"unidad": "Yari Samurai", "cantidad": 2}, {"unidad": "Bow Ashigaru", "cantidad": 2}, {"unidad": "Yari Cavalry", "cantidad": 2}], "pista": "En la llanura no hay dónde esconderse. Forma un muro de lanzas y deja que ellos vengan.", "desbloquea": {"unidades": ["Bow Cavalry", "Yari Cavalry"], "motivo": "Los nómadas te regalan caballos y sus mejores arqueros montados cabalgan contigo."}}, {"id": 5, "titulo": "La prueba del arquero montado", "lugar": "llanura", "mapa": {"x": 440, "y": 600, "etiqueta": "La prueba"}, "historia": "Kaede no confía del todo en ti. Antes de partir, debes dar caza a una columna de suministros de Hosokawa usando sus jinetes como ellos lo hacen.", "dialogo_intro": [{"p": "kaede", "t": "Un arco a caballo no es una lanza. Si te quedas quieto, mueres."}, {"p": "kaede", "t": "Una columna de suministros de Hosokawa cruza la llanura. Cázala como lo haría mi pueblo: dispara, retrocede, repite."}], "dialogo_victoria": [{"p": "sato", "t": "Llevo años viajando con los jinetes de Kaede y nunca vi a un forastero aprender tan rápido. Entrenaré a tus arqueros."}], "condiciones": {"estacion": "Primavera", "hora": "Día", "tipo": "Campo abierto (llanura amplia)"}, "jugador": {"fondos": 4000, "max_unidades": 6, "unidades_disponibles": ["Bow Cavalry", "Yari Cavalry"], "obligatorias": [{"unidad": "Bow Cavalry", "minimo": 4}], "restriccion_extra": "Solo caballería en esta fase"}, "enemigo": [{"unidad": "General", "cantidad": 1}, {"unidad": "Yari Ashigaru", "cantidad": 5}, {"unidad": "Yari Samurai", "cantidad": 2}, {"unidad": "Bow Ashigaru", "cantidad": 2}], "pista": "Dispara, retrocede y repite. Nunca cargues contra las lanzas: rodéalas y castiga primero a sus arqueros. Vigila a su general a caballo.", "desbloquea": {"unidades": ["Bow Samurai"], "motivo": "El maestro Sato, que viajaba con los nómadas, decide entrenar a tus arqueros."}}, {"id": 6, "titulo": "El señor de los impuestos", "lugar": "feudo", "mapa": {"x": 225, "y": 500, "etiqueta": "Hosokawa"}, "historia": "Por fin llegas al feudo de Hosokawa. Exige el doble de arroz y ahorca a quien no paga. Ha reunido a toda su guardia samurái de élite.", "dialogo_intro": [{"p": "hosokawa", "t": "¿Campesinos a caballo? Mi guardia ha cortado cabezas más nobles que las vuestras."}, {"p": "hosokawa", "t": "Diecinueve compañías de samuráis. No necesito arqueros ni jinetes para aplastar a unos ladrones de arroz."}, {"p": "kaede", "t": "No tiene arcos ni caballos. Recuerda lo que aprendiste en la llanura."}], "dialogo_victoria": [{"p": "genjiro", "t": "Hosokawa ha caído. Parte de su guardia ha tirado las armas: prefieren servir a alguien que no ahorca campesinos."}], "condiciones": {"estacion": "Verano", "hora": "Día", "tipo": "Campo abierto"}, "jugador": {"fondos": 7500, "max_unidades": 12, "unidades_disponibles": ["Yari Ashigaru", "Bow Ashigaru", "Yari Samurai", "Naginata Warrior Monks", "Bow Cavalry", "Yari Cavalry", "Bow Samurai"], "obligatorias": [{"unidad": "Bow Cavalry", "minimo": 3}]}, "enemigo": [{"unidad": "General", "cantidad": 1}, {"unidad": "Katana Samurai", "cantidad": 19}], "pista": "No tienen ni un arco ni un caballo. Tus arqueros montados pueden desangrarlos sin que te alcancen nunca.", "desbloquea": {"unidades": ["Katana Samurai"], "motivo": "Tras la caída de Hosokawa, parte de su guardia se niega a seguir sirviendo a un tirano y se une a ti."}}, {"id": 7, "titulo": "El puerto de los extranjeros", "lugar": "puerto", "mapa": {"x": 470, "y": 410, "etiqueta": "Sakai"}, "historia": "En el puerto de Sakai, los comerciantes nanban venden armas de fuego. Los piratas wako, pagados por el daimyo, han tomado el muelle.", "dialogo_intro": [{"p": "mendes", "t": "¡Olá! Soy Mendes, capitán de la nao Santa Clara. Los piratas wako tienen el muelle y mi mercancía."}, {"p": "mendes", "t": "Arcabuces, amigo. Fuego y trueno. Libera el puerto y te haré buen precio."}], "dialogo_victoria": [{"p": "mendes", "t": "¡Obrigado! Como prometí: arcabuces para tus ashigaru. Y cuidado con la pólvora mojada."}], "condiciones": {"estacion": "Verano", "hora": "Amanecer", "tipo": "Campo abierto (costa)"}, "jugador": {"fondos": 6000, "max_unidades": 14, "unidades_disponibles": ["Yari Ashigaru", "Bow Ashigaru", "Yari Samurai", "Naginata Warrior Monks", "Bow Cavalry", "Yari Cavalry", "Bow Samurai", "Katana Samurai"]}, "enemigo": [{"unidad": "General", "cantidad": 1}, {"unidad": "Matchlock Ashigaru", "cantidad": 5}, {"unidad": "Katana Samurai", "cantidad": 4}, {"unidad": "Yari Ashigaru", "cantidad": 4}, {"unidad": "Bow Ashigaru", "cantidad": 2}], "pista": "Sus arcabuces son mortales a media distancia, pero lentos de recargar. Ataca por los flancos.", "desbloquea": {"unidades": ["Matchlock Ashigaru"], "motivo": "Los comerciantes agradecidos te venden arcabuces a buen precio."}}, {"id": 8, "titulo": "El dojo de la montaña", "lugar": "dojo", "mapa": {"x": 135, "y": 305, "etiqueta": "El dojo"}, "historia": "El daimyo ha tomado el dojo del maestro Ishida y encerrado a sus alumnos. Sus mejores tropas guardan el camino nevado.", "dialogo_intro": [{"p": "ishida", "t": "Si lees esta carta, el daimyo Matsunaga ha tomado mi dojo y encerrado a mis alumnos."}, {"p": "ishida", "t": "Sus mejores tropas vigilan el camino nevado. La nieve moja la pólvora y frena a los caballos. Elige con cuidado."}], "dialogo_victoria": [{"p": "ishida", "t": "Mis alumnos y sus no-dachi son tuyos. El acero largo corta lanzas y hombres por igual."}], "condiciones": {"estacion": "Invierno", "hora": "Noche", "tipo": "Campo abierto (montaña)"}, "jugador": {"fondos": 9000, "max_unidades": 14, "unidades_disponibles": ["Yari Ashigaru", "Bow Ashigaru", "Yari Samurai", "Naginata Warrior Monks", "Bow Cavalry", "Yari Cavalry", "Bow Samurai", "Katana Samurai", "Matchlock Ashigaru"]}, "enemigo": [{"unidad": "General", "cantidad": 1}, {"unidad": "Naginata Samurai", "cantidad": 5}, {"unidad": "Bow Samurai", "cantidad": 5}, {"unidad": "Katana Samurai", "cantidad": 4}, {"unidad": "Matchlock Ashigaru", "cantidad": 3}], "pista": "Con la nieve, los arcabuces fallan más y los caballos van lentos. Piensa bien qué llevas.", "desbloquea": {"unidades": ["No-Dachi Samurai"], "motivo": "El maestro Ishida y sus alumnos de no-dachi se unen a ti."}}, {"id": 9, "titulo": "Emboscada en el bosque de cedros", "lugar": "bosque", "mapa": {"x": 400, "y": 210, "etiqueta": "Los cedros"}, "historia": "Mientras marchas hacia el castillo, el general del daimyo, Kuroda, te tiende una emboscada con su caballería pesada.", "dialogo_intro": [{"p": "kuroda", "t": "El daimyo me ha ordenado que no llegues a su castillo. Mis jinetes llevan días esperándote entre los cedros."}, {"p": "kuroda", "t": "Cazaste a Hosokawa con arqueros a caballo. Veamos qué haces cuando los arqueros son míos."}], "dialogo_victoria": [{"p": "kaede", "t": "Kuroda ha muerto. Sus jinetes de élite se han quedado sin señor... y te han jurado lealtad."}], "condiciones": {"estacion": "Otoño", "hora": "Día", "tipo": "Campo abierto (bosque)"}, "jugador": {"fondos": 10000, "max_unidades": 16, "unidades_disponibles": ["Yari Ashigaru", "Bow Ashigaru", "Yari Samurai", "Naginata Warrior Monks", "Bow Cavalry", "Yari Cavalry", "Bow Samurai", "Katana Samurai", "Matchlock Ashigaru", "No-Dachi Samurai"]}, "enemigo": [{"unidad": "General", "cantidad": 1}, {"unidad": "Katana Cavalry", "cantidad": 5}, {"unidad": "Yari Cavalry", "cantidad": 4}, {"unidad": "Bow Cavalry", "cantidad": 3}, {"unidad": "Yari Samurai", "cantidad": 4}, {"unidad": "Bow Samurai", "cantidad": 3}], "pista": "Ahora eres tú quien sufre a los arqueros montados. Usa tu propia caballería ligera para cazar la suya.", "desbloquea": {"unidades": ["Katana Cavalry"], "motivo": "Con Kuroda muerto, sus jinetes de élite juran lealtad al vencedor."}}, {"id": 10, "titulo": "El castillo del daimyo", "lugar": "castillo", "mapa": {"x": 295, "y": 122, "etiqueta": "El castillo"}, "historia": "El daimyo que permitió todo esto se encierra en su castillo. Los campesinos de Kawamura, los nómadas, los monjes y los ronin marchan juntos. Es el final del camino.", "dialogo_intro": [{"p": "matsunaga", "t": "Un campesino a las puertas de mi castillo. Qué tiempos tan ridículos."}, {"p": "haru", "t": "Están todos aquí: la aldea, los monjes, los jinetes, los ronin. Es el final del camino."}], "dialogo_victoria": [{"p": "genjiro", "t": "Las puertas han cedido. El castillo es nuestro."}], "condiciones": {"estacion": "Otoño", "hora": "Día", "tipo": "Asedio (el jugador ataca)"}, "jugador": {"fondos": 13000, "max_unidades": 20, "unidades_disponibles": ["Yari Ashigaru", "Bow Ashigaru", "Yari Samurai", "Naginata Warrior Monks", "Bow Cavalry", "Yari Cavalry", "Bow Samurai", "Katana Samurai", "Matchlock Ashigaru", "No-Dachi Samurai", "Katana Cavalry"]}, "enemigo": [{"unidad": "General", "cantidad": 1}, {"unidad": "Katana Samurai", "cantidad": 4}, {"unidad": "No-Dachi Samurai", "cantidad": 3}, {"unidad": "Bow Samurai", "cantidad": 5}, {"unidad": "Matchlock Ashigaru", "cantidad": 4}, {"unidad": "Yari Samurai", "cantidad": 3}], "pista": "En el asedio, los caballos sirven de poco dentro de las murallas, pero son perfectos para atrapar a los que huyen.", "desbloquea": null}]};</script>
+<script>
+"use strict";
+/* =========================================================
+   Utilidades
+   ========================================================= */
+const D = DATA, U = D.unidades, PH = D.fases, PJ = D.personajes;
+const $ = s => document.querySelector(s);
+const KANJI = ['一','二','三','四','五','六','七','八','九','十'];
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt = n => Math.round(n).toLocaleString('es-ES');
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function hex2rgb(h){h=h.replace('#','');if(h.length===3)h=h.split('').map(c=>c+c).join('');const n=parseInt(h,16);return[n>>16&255,n>>8&255,n&255]}
+function mix(a,b,t){const A=hex2rgb(a),B=hex2rgb(b);return '#'+A.map((v,i)=>Math.round(v+(B[i]-v)*t).toString(16).padStart(2,'0')).join('')}
+let UID = 0;
+const r1 = v => Math.round(v*10)/10;
+
+/* =========================================================
+   Estado
+   ========================================================= */
+const KEY = 'ikki_estado_v1', IKEY = 'ikki_imagenes_v1';
+let S = { completadas: [], jugadores: 1, musica: true, volumen: .6 };
+let IMGS = {};
+function load(){
+  try{ const v = JSON.parse(localStorage.getItem(KEY)); if(v && Array.isArray(v.completadas)) S = Object.assign(S, v); }catch(e){}
+  try{ const v = JSON.parse(localStorage.getItem(IKEY)); if(v && typeof v === 'object') IMGS = v; }catch(e){}
+}
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
+function saveImgs(){ try{ localStorage.setItem(IKEY, JSON.stringify(IMGS)); return true; }catch(e){ return false; } }
+const done = id => S.completadas.includes(id);
+function nextId(){ for(const f of PH) if(!done(f.id)) return f.id; return null; }
+function unlockedUnits(){
+  const out = [...D.unidades_iniciales];
+  for(const f of PH) if(done(f.id) && f.desbloquea) for(const u of f.desbloquea.unidades) if(!out.includes(u)) out.push(u);
+  return out;
+}
+function show(id, mode){
+  document.querySelectorAll('.screen').forEach(s => s.classList.toggle('active', s.id === id));
+  window.scrollTo(0,0);
+  if(typeof Music !== 'undefined') Music.setMode(mode || (id === 's-brief' ? 'batalla' : (id === 's-splash' || id === 's-title' || id === 's-end') ? 'menu' : 'paz'));
+  if(typeof updateMusicButtons !== 'undefined') updateMusicButtons();
+}
+function toast(msg){
+  const t = document.createElement('div'); t.className='toast'; t.textContent = msg;
+  document.body.appendChild(t); setTimeout(()=>t.remove(), 2600);
+}
+
+/* =========================================================
+   Retratos (SVG original, estilo ukiyo-e simplificado)
+   ========================================================= */
+function portraitSVG(P){
+  const id = 'p' + (++UID);
+  const ink = '#2a1d14', skin = P.piel, hair = P.color_pelo || '#1a1714';
+  const beardC = P.color_barba || hair;
+  const hat = P.sombrero || 'ninguno', old = P.edad === 'anciano', fem = !!P.femenino;
+  let s = `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <defs><radialGradient id="${id}g" cx=".5" cy=".35" r=".75"><stop offset="0" stop-color="${mix(P.fondo,'#ffffff',.35)}"/><stop offset="1" stop-color="${P.fondo}"/></radialGradient>
+  <linearGradient id="${id}k" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="${mix(P.ropa,'#000000',.25)}"/><stop offset=".5" stop-color="${P.ropa}"/><stop offset="1" stop-color="${mix(P.ropa,'#000000',.35)}"/></linearGradient></defs>
+  <rect width="200" height="200" fill="url(#${id}g)"/>
+  <circle cx="152" cy="52" r="34" fill="#fff" opacity=".13"/>
+  <path d="M0 150 Q40 132 80 146 T160 140 T200 146 V200 H0Z" fill="${mix(P.fondo,'#000000',.3)}" opacity=".45"/>`;
+  // arco a la espalda
+  if(P.accesorio === 'arco') s += `<path d="M150 14 Q186 108 150 204" stroke="#5a3a1e" stroke-width="6" fill="none" stroke-linecap="round"/><path d="M150 14 L150 204" stroke="#efe6d2" stroke-width="1.2"/>`;
+  // pelo trasero
+  if(P.pelo === 'coleta') s += `<path d="M116 66 Q152 74 152 116 Q150 150 166 182 Q140 168 132 132 Q127 100 108 80Z" fill="${hair}" stroke="${ink}" stroke-width="1.5"/>`;
+  // protector de nuca del kabuto
+  if(hat === 'kabuto') s += `<path d="M56 84 L44 132 Q100 152 156 132 L144 84Z" fill="#26262b" stroke="${ink}" stroke-width="1.5"/>
+    <path d="M50 104 Q100 118 150 104 M47 118 Q100 134 153 118" stroke="${P.ropa2}" stroke-width="3" fill="none"/>`;
+  // cuerpo
+  s += `<path d="M6 204 C12 168 46 150 100 148 C154 150 188 168 194 204Z" fill="url(#${id}k)" stroke="${ink}" stroke-width="2"/>`;
+  if(hat === 'kabuto'){ // hombreras
+    s += `<path d="M18 176 L30 150 L66 156 L58 186Z" fill="${P.ropa2}" stroke="${ink}" stroke-width="1.5"/><path d="M182 176 L170 150 L134 156 L142 186Z" fill="${P.ropa2}" stroke="${ink}" stroke-width="1.5"/>
+      <path d="M26 160 L62 166 M23 168 L60 175 M20 176 L59 183 M174 160 L138 166 M177 168 L140 175 M180 176 L141 183" stroke="#d9c58a" stroke-width="1.4"/>`;
+  }
+  s += `<path d="M84 150 L100 180 L116 150Z" fill="#efe9dc"/>
+  <path d="M124 150 Q112 168 100 184" stroke="${P.ropa2}" stroke-width="9" fill="none"/>
+  <path d="M76 150 Q88 170 104 198" stroke="${P.ropa2}" stroke-width="9" fill="none"/>`;
+  if(P.ropa2 === '#c9a24a' || P.accesorio === 'abanico') s += `<path d="M30 190 Q60 176 70 196 M130 196 Q140 176 170 190" stroke="${P.ropa2}" stroke-width="2" fill="none" opacity=".7"/>`;
+  // cuello
+  s += `<rect x="89" y="116" width="22" height="36" fill="${skin}"/><rect x="89" y="116" width="22" height="16" fill="#000" opacity=".12"/>`;
+  // cabeza
+  const face = (hat === 'capucha');
+  if(face){
+    s += `<path d="M56 104 Q52 50 100 46 Q148 50 144 104 Q150 142 130 160 L70 160 Q50 142 56 104Z" fill="${P.ropa}" stroke="${ink}" stroke-width="2"/>
+      <path d="M70 70 Q100 56 130 70 M64 120 Q70 140 80 152 M136 120 Q130 140 120 152" stroke="${ink}" stroke-width="1" fill="none" opacity=".35"/>
+      <ellipse cx="100" cy="100" rx="23" ry="28" fill="${skin}" stroke="${ink}" stroke-width="1.8"/>`;
+  } else {
+    s += `<ellipse cx="71" cy="99" rx="5.5" ry="9" fill="${skin}" stroke="${ink}" stroke-width="1.5"/><ellipse cx="129" cy="99" rx="5.5" ry="9" fill="${skin}" stroke="${ink}" stroke-width="1.5"/>
+      <ellipse cx="100" cy="95" rx="29" ry="36" fill="${skin}" stroke="${ink}" stroke-width="2"/>
+      <path d="M118 66 Q130 90 124 124 Q116 130 108 131 Q126 112 118 66Z" fill="#000" opacity=".07"/>`;
+  }
+  // pelo delantero
+  if(!face && hat !== 'kabuto'){
+    if(P.pelo === 'chonmage' || P.pelo === 'canoso'){
+      s += `<ellipse cx="100" cy="68" rx="22" ry="9" fill="#6a7a8a" opacity=".22"/>
+        <path d="M71 102 Q66 74 80 63 L83 69 Q75 80 76 102Z" fill="${hair}" stroke="${ink}" stroke-width="1"/>
+        <path d="M129 102 Q134 74 120 63 L117 69 Q125 80 124 102Z" fill="${hair}" stroke="${ink}" stroke-width="1"/>
+        <rect x="95.5" y="${P.pelo==='canoso'?46:40}" width="9" height="${P.pelo==='canoso'?16:22}" rx="4.5" fill="${hair}" stroke="${ink}" stroke-width="1.2"/>
+        <rect x="94" y="56" width="12" height="3.5" fill="#efe6d2" stroke="${ink}" stroke-width=".6"/>`;
+    } else if(P.pelo === 'mono' || P.pelo === 'coleta'){
+      s += `<path d="M70 100 Q64 56 100 54 Q136 56 130 100 Q126 76 112 70 Q100 76 88 70 Q74 76 70 100Z" fill="${hair}" stroke="${ink}" stroke-width="1.5"/>`;
+      if(P.pelo === 'mono') s += `<circle cx="100" cy="50" r="13" fill="${hair}" stroke="${ink}" stroke-width="1.5"/><path d="M80 44 L122 54" stroke="#6b4a2a" stroke-width="2.5"/><circle cx="122" cy="54" r="3" fill="#b3362b"/>`;
+      else s += `<path d="M84 70 L80 86 M92 72 L90 84 M110 72 L112 84" stroke="${hair}" stroke-width="3" stroke-linecap="round"/>`;
+    } else if(P.pelo === 'corto'){
+      s += `<path d="M70 98 Q62 54 100 52 Q138 54 130 98 Q128 78 120 72 Q100 64 80 72 Q72 78 70 98Z" fill="${hair}" stroke="${ink}" stroke-width="1.5"/>
+        <path d="M80 62 q4 -4 8 0 M96 57 q4 -4 8 0 M112 62 q4 -4 8 0" stroke="${ink}" stroke-width="1" fill="none" opacity=".5"/>`;
+    } else if(P.pelo === 'calvo'){
+      s += `<ellipse cx="92" cy="70" rx="10" ry="5" fill="#fff" opacity=".25"/>`;
+    }
+  }
+  // rasgos
+  const ex = P.expresion || 'serena';
+  const eyes = [88,112].map(cx => {
+    const sd = cx < 100 ? -1 : 1;
+    let e = '', b = '';
+    if(ex === 'serena'){ e = `<path d="M${cx-6} 95 Q${cx} ${old?99:98} ${cx+6} 95" stroke="${ink}" stroke-width="2.2" fill="none" stroke-linecap="round"/>`; b = `<path d="M${cx+9*sd} 86 Q${cx} 81 ${cx-7*sd} 85" stroke="${old?'#cfc8bc':ink}" stroke-width="2.4" fill="none" stroke-linecap="round"/>`; }
+    if(ex === 'sonrisa'){ e = `<path d="M${cx-6} 96 Q${cx} 90 ${cx+6} 96" stroke="${ink}" stroke-width="2.4" fill="none" stroke-linecap="round"/>`; b = `<path d="M${cx+9*sd} 84 Q${cx} 78 ${cx-7*sd} 83" stroke="${ink}" stroke-width="2.4" fill="none" stroke-linecap="round"/>`; }
+    if(ex === 'severa'){ e = `<path d="M${cx-6} 95 Q${cx} 91 ${cx+6} 95 Q${cx} 97.5 ${cx-6} 95Z" fill="${ink}"/>`; b = `<path d="M${cx+9*sd} 84 L${cx-7*sd} 88.5" stroke="${old?'#cfc8bc':ink}" stroke-width="3.2" stroke-linecap="round"/>`; }
+    if(ex === 'cruel'){ e = `<path d="M${cx-6} 95.5 Q${cx} 92.5 ${cx+6} 95.5 Q${cx} 97 ${cx-6} 95.5Z" fill="${ink}"/><circle cx="${cx}" cy="95" r="1" fill="#fff"/>`; b = `<path d="M${cx+10*sd} 81 L${cx-7*sd} 90" stroke="${old?'#9a948c':ink}" stroke-width="3.4" stroke-linecap="round"/>`; }
+    return e + b;
+  }).join('');
+  s += eyes;
+  s += `<path d="M100 97 Q98 104 96 108 Q100 110.5 103.5 108.5" stroke="${ink}" stroke-width="1.6" fill="none" stroke-linecap="round"/>`;
+  if(old) s += `<path d="M88 76 Q100 73 112 76 M90 80 Q100 78 110 80" stroke="${ink}" stroke-width="1" fill="none" opacity=".35"/><path d="M90 108 Q87 116 90 122 M110 108 Q113 116 110 122 M77 92 l-4 -2 M77 96 l-4 1 M123 92 l4 -2 M123 96 l4 1" stroke="${ink}" stroke-width="1.1" fill="none" opacity=".4"/>`;
+  if(fem) s += `<ellipse cx="83" cy="108" rx="6" ry="3" fill="#e0705e" opacity=".3"/><ellipse cx="117" cy="108" rx="6" ry="3" fill="#e0705e" opacity=".3"/>`;
+  // boca
+  const mouth = {
+    serena: `M94 119 Q100 121 106 119`,
+    sonrisa: `M92 117 Q100 125 108 117`,
+    severa: `M93 120 L107 120`,
+    cruel: `M91 121 Q100 117 109 122 M109 122 l2 -3`
+  }[ex];
+  if(!P.mascara) s += `<path d="${mouth}" stroke="${fem?'#9a2a20':ink}" stroke-width="${fem?2.4:2}" fill="none" stroke-linecap="round"/>`;
+  if(P.cicatriz) s += `<path d="M84 80 L97 107" stroke="#a24d40" stroke-width="2.2" stroke-linecap="round"/><path d="M87 86 l4 -2 M90 93 l4 -2 M93 100 l4 -2" stroke="#a24d40" stroke-width="1.2"/>`;
+  // barbas
+  const B = P.barba || 'ninguna';
+  if(B === 'incipiente') s += `<path d="M73 104 Q76 128 100 133 Q124 128 127 104 Q120 123 100 125 Q80 123 73 104Z M90 113 Q100 110 110 113 L110 116 Q100 114 90 116Z" fill="#2a2018" opacity=".2"/>`;
+  if(B === 'bigote') s += `<path d="M88 113 Q94 109 100 112 Q106 109 112 113 Q116 121 119 127 Q109 116 100 115.5 Q91 116 81 127 Q84 121 88 113Z" fill="${beardC}" stroke="${ink}" stroke-width=".8"/>`;
+  if(B === 'perilla') s += `<path d="M90 114 Q100 110 110 114" stroke="${beardC}" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M95 125 Q100 146 105 125Z" fill="${beardC}" stroke="${ink}" stroke-width=".8"/>`;
+  if(B === 'barba') s += `<path d="M72 100 Q72 130 100 142 Q128 130 128 100 Q124 120 112 122 Q100 117 88 122 Q76 120 72 100Z" fill="${beardC}" stroke="${ink}" stroke-width="1"/><path d="M88 114 Q100 108 112 114 Q100 113 88 114Z" fill="${beardC}" stroke="${ink}" stroke-width="1"/><path d="${mouth}" stroke="${ink}" stroke-width="2" fill="none"/>`;
+  if(B === 'blanca') s += `<path d="M76 108 Q78 132 92 152 Q100 178 106 152 Q122 132 124 108 Q116 123 100 121 Q84 123 76 108Z" fill="${beardC}" stroke="${ink}" stroke-width="1"/><path d="M94 130 Q96 145 99 160 M104 130 Q104 145 102 158 M88 126 Q90 136 94 146" stroke="#bdb8ae" stroke-width="1" fill="none"/><path d="M87 115 Q100 108 113 115 Q118 124 116 132 Q108 117 100 116 Q92 117 84 132 Q82 124 87 115Z" fill="${beardC}" stroke="${ink}" stroke-width=".8"/>`;
+  if(P.mascara) s += `<path d="M72 100 Q74 127 100 135 Q126 127 128 100 Q119 106 112 104 L100 101 L88 104 Q81 106 72 100Z" fill="#5a1414" stroke="${ink}" stroke-width="1.6"/><path d="M85 113 Q100 106 115 113" stroke="#e9e2d0" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M90 121 L110 121" stroke="#e9e2d0" stroke-width="1.5" stroke-dasharray="2 2"/>`;
+  // sombreros
+  if(hat === 'kabuto'){
+    const crest = P.mascara
+      ? `<path d="M95 66 Q80 46 70 18 Q88 42 100 62Z" fill="#d4af37" stroke="${ink}" stroke-width="1"/><path d="M105 66 Q120 46 130 18 Q112 42 100 62Z" fill="#d4af37" stroke="${ink}" stroke-width="1"/>`
+      : `<path d="M76 40 Q100 78 124 40 Q100 62 76 40Z" fill="#d4af37" stroke="${ink}" stroke-width="1"/>`;
+    s += `<path d="M64 88 Q64 46 100 44 Q136 46 136 88 Q100 79 64 88Z" fill="#2b2b31" stroke="${ink}" stroke-width="2"/>
+      <path d="M80 50 L78 84 M90 46 L89 81 M100 44 L100 80 M110 46 L111 81 M120 50 L122 84" stroke="#55555e" stroke-width="1.2"/>
+      <path d="M60 89 Q100 74 140 89 Q100 84 60 89Z" fill="#18181c" stroke="${ink}" stroke-width="1.5"/>
+      <path d="M62 82 L50 70 L60 94Z M138 82 L150 70 L140 94Z" fill="${P.ropa}" stroke="${ink}" stroke-width="1.2"/>${crest}`;
+  }
+  if(hat === 'hachimaki') s += `<path d="M70 75 Q100 69 130 75 L130 83 Q100 77 70 83Z" fill="#f2ede2" stroke="${ink}" stroke-width="1"/><circle cx="100" cy="76" r="3.6" fill="#b3362b"/><path d="M130 79 Q146 70 158 80 M130 81 Q148 88 154 100" stroke="#f2ede2" stroke-width="4" fill="none" stroke-linecap="round"/>`;
+  if(hat === 'europeo') s += `<ellipse cx="100" cy="66" rx="54" ry="11" fill="#1d1d22" stroke="${ink}" stroke-width="1.5"/><path d="M74 66 Q74 34 100 32 Q126 34 126 66Z" fill="#1d1d22" stroke="${ink}" stroke-width="1.5"/><rect x="74" y="56" width="52" height="6" fill="#b3362b"/><path d="M118 52 Q148 18 166 46 Q146 32 124 56Z" fill="#f2ede2" stroke="${ink}" stroke-width="1"/>`;
+  // accesorios delanteros
+  if(P.accesorio === 'rosario'){
+    let b = '';
+    for(let i=0;i<=14;i++){ const t=i/14, x=(1-t)*(1-t)*70+2*(1-t)*t*100+t*t*130, y=(1-t)*(1-t)*156+2*(1-t)*t*204+t*t*156; b += `<circle cx="${r1(x)}" cy="${r1(y)}" r="${i===7?6:3.6}" fill="#4a2a18" stroke="${ink}" stroke-width=".6"/>`; }
+    s += b;
+  }
+  if(P.accesorio === 'abanico') s += `<path d="M156 204 L146 168" stroke="#3a2614" stroke-width="5" stroke-linecap="round"/><path d="M146 168 Q120 150 132 128 Q146 116 162 126 Q176 146 146 168Z" fill="#d4af37" stroke="${ink}" stroke-width="1.5"/><circle cx="148" cy="142" r="7" fill="#b3362b"/>`;
+  s += `<rect width="200" height="200" fill="none" stroke="#000" stroke-opacity=".25" stroke-width="6"/></svg>`;
+  return s;
+}
+
+/* =========================================================
+   Iconos de unidad (respaldo dibujado)
+   ========================================================= */
+const CLASS_BG = { ashigaru:['#9a7a4e','#5c4428'], samurai:['#a33a2c','#4e1611'], monje:['#c98a3a','#6a3e14'], caballeria:['#3f6474','#1c2f38'], general:['#c9a24a','#5c4614'] };
+const TIPO_K = { lanza:'槍', arco:'弓', arcabuz:'銃', katana:'刀', nodachi:'刀', naginata:'薙', general:'将' };
+function horseShape(c, graze){
+  const neck = graze ? `M66 30 L82 52 L92 62 L96 57 L86 46 L76 28Z` : `M64 32 L76 10 Q80 4 86 6 L98 18 L95 23 L84 19 L76 38Z`;
+  return `<g fill="${c}"><ellipse cx="48" cy="36" rx="26" ry="12.5"/><path d="${neck}"/>${graze?'':'<path d="M81 7 L83 0 L86 6Z"/>'}<path d="M24 30 Q10 34 9 54 Q16 43 25 38Z"/></g>
+  <g stroke="${c}" stroke-width="4.5" stroke-linecap="round"><line x1="66" y1="42" x2="70" y2="68"/><line x1="60" y1="44" x2="57" y2="68"/><line x1="32" y1="42" x2="27" y2="68"/><line x1="26" y1="40" x2="19" y2="66"/></g>`;
+}
+function weaponSVG(t, ox, oy){ // ox,oy: hombro
+  const st = '#3a2a1a', bl = '#e4e4e4';
+  if(t === 'lanza') return `<line x1="${ox-30}" y1="${oy+70}" x2="${ox+38}" y2="${oy-58}" stroke="${st}" stroke-width="3.2" stroke-linecap="round"/><path d="M${ox+38} ${oy-58} l-1 -14 l6 12Z" fill="${bl}" stroke="#222" stroke-width=".6"/><line x1="${ox}" y1="${oy+2}" x2="${ox+12}" y2="${oy+4}" stroke="#1a1410" stroke-width="5" stroke-linecap="round"/>`;
+  if(t === 'arco') return `<path d="M${ox+24} ${oy-40} Q${ox+46} ${oy+6} ${ox+24} ${oy+52}" stroke="${st}" stroke-width="3" fill="none"/><path d="M${ox+24} ${oy-40} L${ox+14} ${oy+6} L${ox+24} ${oy+52}" stroke="#e8e0cc" stroke-width="1" fill="none"/><line x1="${ox+8}" y1="${oy+6}" x2="${ox+50}" y2="${oy+4}" stroke="#2a2018" stroke-width="1.6"/><line x1="${ox}" y1="${oy+2}" x2="${ox+30}" y2="${oy+5}" stroke="#1a1410" stroke-width="5" stroke-linecap="round"/>`;
+  if(t === 'arcabuz') return `<line x1="${ox-6}" y1="${oy+10}" x2="${ox+46}" y2="${oy+2}" stroke="#2a2420" stroke-width="4.5" stroke-linecap="round"/><line x1="${ox-6}" y1="${oy+10}" x2="${ox+10}" y2="${oy+8}" stroke="#7a4a24" stroke-width="6" stroke-linecap="round"/><circle cx="${ox+54}" cy="${oy}" r="5" fill="#ddd" opacity=".8"/><circle cx="${ox+62}" cy="${oy-5}" r="7" fill="#ddd" opacity=".55"/><circle cx="${ox+70}" cy="${oy-12}" r="8" fill="#ddd" opacity=".3"/>`;
+  if(t === 'katana') return `<line x1="${ox}" y1="${oy+2}" x2="${ox+12}" y2="${oy-8}" stroke="#1a1410" stroke-width="5" stroke-linecap="round"/><path d="M${ox+12} ${oy-8} Q${ox+30} ${oy-30} ${ox+34} ${oy-54}" stroke="${bl}" stroke-width="3" fill="none" stroke-linecap="round"/><line x1="${ox+8}" y1="${oy-4}" x2="${ox+16}" y2="${oy-12}" stroke="#c9a24a" stroke-width="3"/>`;
+  if(t === 'nodachi') return `<line x1="${ox}" y1="${oy+2}" x2="${ox+8}" y2="${oy-10}" stroke="#1a1410" stroke-width="5" stroke-linecap="round"/><line x1="${ox+2}" y1="${oy+6}" x2="${ox+10}" y2="${oy-12}" stroke="#2a2018" stroke-width="3.5"/><path d="M${ox+10} ${oy-12} Q${ox+26} ${oy-50} ${ox+44} ${oy-80}" stroke="${bl}" stroke-width="3.6" fill="none" stroke-linecap="round"/>`;
+  if(t === 'naginata') return `<line x1="${ox-26}" y1="${oy+62}" x2="${ox+30}" y2="${oy-50}" stroke="${st}" stroke-width="3.2" stroke-linecap="round"/><path d="M${ox+30} ${oy-50} Q${ox+42} ${oy-62} ${ox+38} ${oy-80} Q${ox+34} ${oy-64} ${ox+27} ${oy-54}Z" fill="${bl}" stroke="#333" stroke-width=".8"/><line x1="${ox}" y1="${oy+2}" x2="${ox+8}" y2="${oy+2}" stroke="#1a1410" stroke-width="5" stroke-linecap="round"/>`;
+  return '';
+}
+function unitIconSVG(name){
+  const u = U[name] || {clase:'ashigaru',tipo:'lanza'};
+  const id = 'u' + (++UID);
+  const [c1,c2] = CLASS_BG[u.clase] || CLASS_BG.ashigaru;
+  const ink = '#1a1410';
+  let s = `<svg viewBox="0 0 120 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${mix(c1,'#ffffff',.18)}"/><stop offset="1" stop-color="${c2}"/></linearGradient></defs>
+  <rect width="120" height="160" fill="url(#${id})"/>
+  <path d="M0 148 Q30 140 60 146 T120 144 V160 H0Z" fill="#000" opacity=".25"/><g class="fig"><circle cx="84" cy="44" r="26" fill="#fff" opacity=".12"/>`;
+  const cav = u.clase === 'caballeria' || u.clase === 'general';
+  if(cav){
+    s += `<g transform="translate(8 82)">${horseShape(ink,false)}</g>`;
+    const sx = 56, sy = 82; // jinete
+    if(u.clase === 'general'){
+      s += `<line x1="50" y1="94" x2="44" y2="22" stroke="#3a2a1a" stroke-width="2.5"/><rect x="24" y="22" width="20" height="30" fill="#b3362b" stroke="${ink}" stroke-width="1"/><circle cx="34" cy="37" r="6" fill="#f1e6cc"/><path d="M48 70 Q30 76 26 100 Q42 92 52 86Z" fill="#b3362b" opacity=".9"/>`;
+    }
+    s += `<path d="M${sx-8} ${sy+10} L${sx-6} ${sy-14} L${sx+8} ${sy-14} L${sx+10} ${sy+10}Z" fill="${ink}"/><circle cx="${sx+1}" cy="${sy-22}" r="7.5" fill="${ink}"/>
+      <path d="M${sx-8} ${sy-22} Q${sx+1} ${sy-36} ${sx+10} ${sy-22}Z" fill="${ink}"/><path d="M${sx-3} ${sy-32} l4 -7 l4 7" stroke="#d4af37" stroke-width="2" fill="none"/>
+      <line x1="${sx+2}" y1="${sy+8}" x2="${sx+6}" y2="${sy+18}" stroke="${ink}" stroke-width="5" stroke-linecap="round"/>`;
+    if(u.tipo === 'lanza') s += `<line x1="${sx-28}" y1="${sy+6}" x2="${sx+52}" y2="${sy-30}" stroke="#3a2a1a" stroke-width="3" stroke-linecap="round"/><path d="M${sx+52} ${sy-30} l10 -6 l-6 10Z" fill="#e4e4e4"/>`;
+    else if(u.tipo !== 'general') s += weaponSVG(u.tipo, sx+4, sy-8);
+    else s += weaponSVG('katana', sx+4, sy-8);
+  } else {
+    const x = 56, y = 84;
+    // sashimono
+    if(u.clase !== 'monje') s += `<line x1="${x-8}" y1="${y-2}" x2="${x-12}" y2="${y-58}" stroke="#3a2a1a" stroke-width="2"/><rect x="${x-30}" y="${y-58}" width="18" height="28" fill="${u.clase==='samurai'?'#f1e6cc':'#2f4a6a'}" stroke="${ink}" stroke-width="1"/><circle cx="${x-21}" cy="${y-44}" r="5" fill="${u.clase==='samurai'?'#b3362b':'#f1e6cc'}"/>`;
+    s += `<line x1="${x-4}" y1="${y+30}" x2="${x-12}" y2="${y+62}" stroke="${ink}" stroke-width="7" stroke-linecap="round"/><line x1="${x+6}" y1="${y+30}" x2="${x+14}" y2="${y+62}" stroke="${ink}" stroke-width="7" stroke-linecap="round"/>
+      <path d="M${x-12} ${y-6} L${x+12} ${y-6} L${x+14} ${y+32} L${x-14} ${y+32}Z" fill="${ink}"/>
+      <path d="M${x-11} ${y+4} L${x+11} ${y+4} M${x-12} ${y+12} L${x+12} ${y+12} M${x-13} ${y+20} L${x+13} ${y+20}" stroke="${mix(c1,'#ffffff',.2)}" stroke-width="1.2" opacity=".6"/>
+      <circle cx="${x}" cy="${y-16}" r="9" fill="${ink}"/>`;
+    if(u.clase === 'ashigaru') s += `<path d="M${x-17} ${y-15} L${x} ${y-30} L${x+17} ${y-15}Z" fill="#3a3028" stroke="${ink}" stroke-width="1"/>`;
+    if(u.clase === 'samurai') s += `<path d="M${x-11} ${y-15} Q${x-11} ${y-32} ${x} ${y-32} Q${x+11} ${y-32} ${x+11} ${y-15}Z" fill="${ink}"/><path d="M${x-14} ${y-15} L${x+14} ${y-15}" stroke="${ink}" stroke-width="3"/><path d="M${x-6} ${y-30} Q${x} ${y-22} ${x+6} ${y-30}" stroke="#d4af37" stroke-width="2.2" fill="none"/>`;
+    if(u.clase === 'monje') s += `<path d="M${x-13} ${y-8} Q${x-15} ${y-30} ${x} ${y-31} Q${x+15} ${y-30} ${x+13} ${y-8} Q${x} ${y-14} ${x-13} ${y-8}Z" fill="#efe9dc" stroke="${ink}" stroke-width="1"/>`;
+    s += weaponSVG(u.tipo, x+8, y-2);
+  }
+  const k = u.clase === 'caballeria' ? '騎' : (u.clase === 'monje' ? '僧' : (TIPO_K[u.tipo] || '将'));
+  s += `<text x="10" y="26" font-family="Yuji Syuku, serif" font-size="20" fill="#fff" opacity=".75">${k}</text></g></svg>`;
+  return s;
+}
+function unitArt(name){
+  // Fondo de color + figura dibujada; si la imagen carga, se oculta la figura y la imagen se muestra entera a su tamaño
+  const u = U[name] || {};
+  let h = unitIconSVG(name);
+  const mine = IMGS[name];
+  if(mine) h += `<img class="pic" src="${mine}" alt="" onload="this.parentNode.classList.add('has-img')" onerror="this.remove()">`;
+  else if(u.img){
+    // primero la versión grande de la tarjeta; si no existe, la pequeña
+    const big = u.img.replace('/icons/', '/large/');
+    h += `<img class="pic" src="${esc(big)}" data-fb="${esc(u.img)}" alt="" loading="lazy" referrerpolicy="no-referrer" onload="this.parentNode.classList.add('has-img')" onerror="if(this.dataset.fb){this.src=this.dataset.fb;this.removeAttribute('data-fb')}else{this.remove()}">`;
+  }
+  return h;
+}
+function unitCard(name, opts = {}){
+  const u = U[name] || {es:''};
+  return `<button class="ucard${opts.enemy?' enemy':''}${opts.locked?' locked':''}" data-unit="${esc(name)}">
+    <div class="art">${opts.locked ? unitIconSVG(name) : unitArt(name)}</div>
+    <div class="n">${opts.locked ? '???' : esc(name === 'General' ? 'General' : name)}</div>
+    <div class="e">${opts.locked ? 'Por desbloquear' : esc(u.es)}</div>
+    ${opts.count ? `<span class="cnt">×${opts.count}</span>` : ''}
+    ${opts.isNew ? `<span class="new">NUEVA</span>` : ''}
+  </button>`;
+}
+function bindCards(root){
+  root.querySelectorAll('.ucard:not(.locked)').forEach(b => b.addEventListener('click', () => openUnit(b.dataset.unit)));
+}
+
+/* =========================================================
+   Escenas de fondo (diálogos, portada, briefing)
+   ========================================================= */
+const SKY = {
+  'Día':      { top:'#c9d6c8', bot:'#f2e4c0', sun:'#c8412f', sx:290, sy:230, sr:56, ink:'#3b3a35' },
+  'Amanecer': { top:'#93a9c4', bot:'#f6c6a2', sun:'#e2603f', sx:300, sy:330, sr:62, ink:'#2e2c38' },
+  'Atardecer':{ top:'#563f69', bot:'#f2a35a', sun:'#d9492b', sx:110, sy:330, sr:66, ink:'#2a1a22' },
+  'Noche':    { top:'#0b1024', bot:'#2c3a5e', sun:'#f1ead2', sx:290, sy:170, sr:36, ink:'#04060e' }
+};
+function ridge(R, base, amp, p1, p2){
+  let d = `M-20 700 L-20 ${base}`;
+  for(let x=-20; x<=420; x+=12){
+    const y = base - amp*(0.5 + 0.32*Math.sin(x*0.016+p1) + 0.18*Math.sin(x*0.043+p2)) + (R()-.5)*amp*0.12;
+    d += ` L${x} ${r1(y)}`;
+  }
+  return d + ' L420 700Z';
+}
+function sceneSVG(lugar, est, hora){
+  const k = SKY[hora] || SKY['Día'];
+  const id = 's' + (++UID);
+  const R = mulberry32((lugar||'x').length*97 + (hora||'').length*13);
+  const winter = est === 'Invierno';
+  const fg = mix(k.bot, '#120e0a', .86);
+  let s = `<svg viewBox="0 0 400 700" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${k.top}"/><stop offset=".62" stop-color="${k.bot}"/></linearGradient></defs>
+  <rect width="400" height="700" fill="url(#${id})"/>`;
+  if(hora === 'Noche'){
+    for(let i=0;i<60;i++) s += `<circle cx="${r1(R()*400)}" cy="${r1(R()*330)}" r="${r1(R()*1.3+.3)}" fill="#fff" opacity="${r1(R()*.6+.2)}"/>`;
+    s += `<circle cx="${k.sx}" cy="${k.sy}" r="${k.sr*2}" fill="${k.sun}" opacity=".08"/>`;
+  }
+  s += `<circle cx="${k.sx}" cy="${k.sy}" r="${k.sr}" fill="${k.sun}" opacity="${hora==='Noche'?.95:.88}"/>`;
+  // nubes en franjas
+  s += `<g fill="${mix(k.bot,'#ffffff',.5)}" opacity=".35"><rect x="-10" y="${k.sy-8}" width="190" height="9" rx="4.5"/><rect x="230" y="${k.sy+20}" width="200" height="7" rx="3.5"/><rect x="40" y="${k.sy+44}" width="140" height="6" rx="3"/></g>`;
+  const layers = [[380,90,.28],[455,70,.48],[525,52,.68]];
+  layers.forEach(([b,a,t],i) => {
+    let c = mix(k.bot, k.ink, t);
+    if(winter && i===0) c = mix(c, '#ffffff', .35);
+    s += `<path d="${ridge(R,b,a,R()*6,R()*6)}" fill="${c}"/>`;
+    s += `<rect x="-10" y="${b-6}" width="420" height="16" fill="${mix(k.bot,'#ffffff',.3)}" opacity=".18"/>`;
+  });
+  // suelo
+  s += `<path d="M-10 610 Q100 590 200 600 T410 596 V700 H-10Z" fill="${winter?'#e6e9ee':fg}"/>`;
+  if(winter) s += `<path d="M-10 610 Q100 590 200 600 T410 596 V606 Q300 606 200 612 T-10 620Z" fill="${fg}" opacity=".25"/>`;
+  s += sceneProps(lugar, fg, R, winter);
+  s += `</svg>`;
+  return s;
+}
+function sceneProps(lugar, c, R, winter){
+  let s = '';
+  const house = (x,y,w) => `<path d="M${x-w} ${y} L${x-w} ${y-w*.7} L${x-w*1.3} ${y-w*.7} L${x} ${y-w*1.7} L${x+w*1.3} ${y-w*.7} L${x+w} ${y-w*.7} L${x+w} ${y}Z" fill="${c}"/>${winter?`<path d="M${x-w*1.3} ${y-w*.7} L${x} ${y-w*1.7} L${x+w*1.3} ${y-w*.7} L${x+w*.9} ${y-w*.85} L${x} ${y-w*1.5} L${x-w*.9} ${y-w*.85}Z" fill="#f4f6f8"/>`:''}`;
+  const pine = (x,y,h) => `<path d="M${x} ${y} L${x} ${y-h*.25}" stroke="${c}" stroke-width="${h*.06}"/><path d="M${x-h*.3} ${y-h*.2} L${x} ${y-h*.6} L${x+h*.3} ${y-h*.2}Z M${x-h*.24} ${y-h*.45} L${x} ${y-h*.85} L${x+h*.24} ${y-h*.45}Z M${x-h*.16} ${y-h*.7} L${x} ${y-h} L${x+h*.16} ${y-h*.7}Z" fill="${c}"/>`;
+  const cedar = (x,y,h) => `<path d="M${x-h*.13} ${y} L${x} ${y-h} L${x+h*.13} ${y}Z" fill="${c}"/>`;
+  const horse = (x,y,sc,flip,graze) => `<g transform="translate(${x} ${y}) scale(${flip?-sc:sc} ${sc}) translate(-50 -68)">${horseShape(c,graze)}</g>`;
+  switch(lugar){
+    case 'aldea':
+      s += house(70,612,26) + house(150,606,20) + house(330,610,30) + pine(250,612,90) + pine(30,600,60);
+      s += `<g fill="${winter?'#fff':'#e9a9b6'}" opacity=".9">${[...Array(14)].map(()=>`<circle cx="${r1(230+R()*60)}" cy="${r1(520+R()*40)}" r="${r1(6+R()*7)}"/>`).join('')}</g>`;
+      break;
+    case 'paso':
+      s += `<path d="M-10 700 L-10 300 L30 320 L50 380 L80 420 L95 520 L130 600 L140 700Z" fill="${c}"/><path d="M410 700 L410 260 L370 300 L350 360 L330 380 L300 470 L280 560 L260 700Z" fill="${c}"/>`;
+      s += pine(60,410,60) + pine(345,370,70) + pine(320,470,50);
+      s += `<path d="M200 610 q-6 -20 4 -36 q-2 16 8 24 q4 -10 2 -20 q12 16 2 32Z" fill="#e8742a" opacity=".85"/>`;
+      break;
+    case 'templo': {
+      const x=300, y=612;
+      s += `<rect x="${x-6}" y="${y-160}" width="12" height="160" fill="${c}"/>`;
+      for(let i=0;i<5;i++){ const yy=y-i*30, w=50-i*6; s += `<rect x="${x-w*.55}" y="${yy-22}" width="${w*1.1}" height="22" fill="${c}"/><path d="M${x-w-8} ${yy-18} Q${x} ${yy-34} ${x+w+8} ${yy-18} L${x+w} ${yy-26} L${x-w} ${yy-26}Z" fill="${c}"/>`; }
+      s += `<line x1="${x}" y1="${y-176}" x2="${x}" y2="${y-215}" stroke="${c}" stroke-width="3"/>`;
+      s += `<path d="M60 612 L66 520 L72 520 L78 612Z M130 612 L136 520 L142 520 L148 612Z" fill="${c}"/><path d="M44 516 Q104 504 164 516 L162 526 Q104 514 46 526Z M54 538 L156 538 L156 546 L54 546Z" fill="${c}"/>`;
+      break; }
+    case 'llanura':
+      s += horse(90,618,1.1,false,true) + horse(170,614,.9,true,false) + horse(300,620,1.25,false,false) + horse(360,612,.8,true,true);
+      s += `<g stroke="${c}" stroke-width="2" opacity=".7">${[...Array(40)].map(()=>{const x=R()*400,y=618+R()*70;return `<path d="M${r1(x-3)} ${r1(y)} l3 -9 l3 9" fill="none"/>`}).join('')}</g>`;
+      break;
+    case 'feudo':
+      s += `<rect x="-10" y="520" width="420" height="92" fill="${c}"/><path d="M-10 512 L410 512 L410 524 L-10 524Z" fill="${c}"/>`;
+      s += `<path d="M150 612 L150 470 L250 470 L250 612Z" fill="${c}"/><path d="M120 476 Q200 440 280 476 L268 456 Q200 430 132 456Z" fill="${c}"/>`;
+      s += `<rect x="176" y="530" width="48" height="82" fill="${mix(c,'#ffffff',.12)}"/>`;
+      s += `<g fill="${c}">${[...Array(9)].map((_,i)=>`<rect x="${i*48}" y="504" width="40" height="5" rx="2"/>`).join('')}</g>`;
+      break;
+    case 'puerto':
+      s += `<rect x="-10" y="560" width="420" height="60" fill="${mix(c,'#3b6a7a',.45)}"/>`;
+      s += `<g stroke="#fff" stroke-width="1.4" opacity=".35" fill="none">${[...Array(12)].map(()=>{const x=R()*400,y=570+R()*36;return `<path d="M${r1(x)} ${r1(y)} q6 -5 12 0 q6 -5 12 0"/>`}).join('')}</g>`;
+      s += `<path d="M180 566 Q260 590 350 560 L360 540 L170 544Z" fill="${c}"/><rect x="214" y="400" width="4" height="146" fill="${c}"/><rect x="270" y="380" width="4" height="166" fill="${c}"/><rect x="320" y="440" width="3" height="104" fill="${c}"/>`;
+      s += `<g fill="${mix(c,'#f2e6c8',.75)}"><path d="M196 420 Q216 450 236 420 L236 470 Q216 490 196 470Z"/><path d="M248 400 Q272 434 296 400 L296 462 Q272 484 248 462Z"/><path d="M304 450 Q321 470 338 450 L338 496 Q321 510 304 496Z"/></g>`;
+      s += `<path d="M268 386 L290 392 L268 398Z" fill="#b3362b"/>`;
+      s += `<rect x="-10" y="590" width="150" height="30" fill="${c}"/><rect x="30" y="540" width="70" height="50" fill="${c}"/><path d="M22 544 L65 516 L108 544Z" fill="${c}"/>`;
+      break;
+    case 'dojo':
+      s += `<path d="M-10 640 L120 520 L200 560 L300 470 L410 540 V700 H-10Z" fill="${mix(c,'#ffffff',winter?.75:.1)}"/>`;
+      s += `<rect x="210" y="478" width="90" height="46" fill="${c}"/><path d="M190 486 Q255 450 320 486 L306 466 Q255 440 204 466Z" fill="${c}"/><path d="M204 466 Q255 440 306 466 L296 460 Q255 438 214 460Z" fill="#f4f6f8"/>`;
+      s += pine(80,600,70) + pine(130,570,50) + pine(350,560,60);
+      break;
+    case 'bosque':
+      for(let i=0;i<22;i++){ const x=-10+i*20+R()*10, h=200+R()*220; s += cedar(x, 640, h); }
+      break;
+    case 'castillo': {
+      const x=210, y=600;
+      s += `<path d="M${x-120} ${y} L${x-96} ${y-70} L${x+96} ${y-70} L${x+120} ${y}Z" fill="${c}"/>`;
+      const tiers=[[90,50],[70,44],[52,40],[36,36]]; let yy=y-70;
+      tiers.forEach(([w,h])=>{ s += `<rect x="${x-w*.75}" y="${yy-h}" width="${w*1.5}" height="${h}" fill="${c}"/><path d="M${x-w-14} ${yy-h+6} Q${x} ${yy-h-16} ${x+w+14} ${yy-h+6} L${x+w} ${yy-h-6} L${x-w} ${yy-h-6}Z" fill="${c}"/>`; yy -= h; });
+      s += `<path d="M${x-8} ${yy-6} l-6 -14 l8 6Z M${x+8} ${yy-6} l6 -14 l-8 6Z" fill="${c}"/>`;
+      s += `<g fill="${mix(c,'#f2d28a',.7)}" opacity=".8">${[0,1,2].map(i=>`<rect x="${x-20+i*16}" y="${y-140}" width="6" height="9"/>`).join('')}</g>`;
+      break; }
+  }
+  return s;
+}
+function particles(est){
+  const cls = {Otoño:'otono',Invierno:'invierno',Primavera:'primavera',Verano:'verano'}[est];
+  if(!cls) return '';
+  const R = mulberry32(est.length*31);
+  let h = `<div class="fx ${cls}">`;
+  const n = cls === 'invierno' ? 46 : 22;
+  for(let i=0;i<n;i++) h += `<i style="left:${r1(R()*104)}%;animation-duration:${r1(cls==='invierno'?6+R()*8:7+R()*9)}s;animation-delay:-${r1(R()*14)}s;transform:scale(${r1(.6+R()*.8)})"></i>`;
+  return h + '</div>';
+}
+function sceneFor(f){ return { lugar:f.lugar, est:f.condiciones.estacion, hora:f.condiciones.hora }; }
+function setScene(el, sc){ el.innerHTML = sceneSVG(sc.lugar, sc.est, sc.hora) + particles(sc.est); }
+
+/* =========================================================
+   Diálogo
+   ========================================================= */
+let DLG = null;
+function playDialog(lines, scene, onDone, mode){
+  show('s-dialog', mode || 'paz');
+  setScene($('#dlg-scene'), scene);
+  $('#dlg-portrait').dataset.p = '';
+  DLG = { lines, i:-1, onDone, typing:false, timer:null, full:'' };
+  nextLine();
+}
+function nextLine(){
+  const d = DLG; if(!d) return;
+  if(d.typing){ clearInterval(d.timer); d.typing=false; $('#dlg-text').textContent = d.full; return; }
+  d.i++;
+  if(d.i >= d.lines.length){ DLG = null; d.onDone && d.onDone(); return; }
+  const L = d.lines[d.i], P = PJ[L.p];
+  const port = $('#dlg-portrait');
+  if(port.dataset.p !== L.p){ port.dataset.p = L.p; port.innerHTML = portraitSVG(P.retrato); port.classList.remove('in'); void port.offsetWidth; port.classList.add('in'); }
+  $('#dlg-name').textContent = P.nombre;
+  $('#dlg-role').textContent = P.rol;
+  const el = $('#dlg-text'); d.full = L.t; d.typing = true; el.textContent = '';
+  let n = 0;
+  clearInterval(d.timer);
+  d.timer = setInterval(() => { n += 2; el.textContent = L.t.slice(0,n); if(n >= L.t.length){ clearInterval(d.timer); d.typing = false; } }, 28);
+}
+function skipDialog(){ const d = DLG; if(!d) return; clearInterval(d.timer); DLG = null; d.onDone && d.onDone(); }
+
+/* =========================================================
+   Mapa
+   ========================================================= */
+function crSegments(P){
+  const segs = [];
+  for(let i=0;i<P.length-1;i++){
+    const p0 = P[Math.max(0,i-1)], p1 = P[i], p2 = P[i+1], p3 = P[Math.min(P.length-1,i+2)];
+    const c1 = [p1[0]+(p2[0]-p0[0])/6, p1[1]+(p2[1]-p0[1])/6];
+    const c2 = [p2[0]-(p3[0]-p1[0])/6, p2[1]-(p3[1]-p1[1])/6];
+    segs.push([p1,c1,c2,p2]);
+  }
+  return segs;
+}
+function bez(s,t){ const u=1-t; return [0,1].map(k => u*u*u*s[0][k] + 3*u*u*t*s[1][k] + 3*u*t*t*s[2][k] + t*t*t*s[3][k]); }
+const segD = s => `M${r1(s[0][0])} ${r1(s[0][1])} C${r1(s[1][0])} ${r1(s[1][1])} ${r1(s[2][0])} ${r1(s[2][1])} ${r1(s[3][0])} ${r1(s[3][1])}`;
+const NODES = PH.map(f => [f.mapa.x, f.mapa.y]);
+const SEGS = crSegments(NODES);
+const SAMPLES = [];
+SEGS.forEach(s => { for(let t=0;t<=1;t+=0.02) SAMPLES.push(bez(s,t)); });
+const SEA = 'M600 250 C575 262 548 290 545 330 C542 370 512 395 518 430 C524 470 552 500 548 540 C545 575 575 600 600 612Z';
+function inSea(x,y){
+  if(x < 505 || y < 245 || y > 615) return false;
+  // aproximación de la costa
+  const cx = y < 330 ? 600 - (y-250)*0.68 : y < 430 ? 545 - (y-330)*0.27 : y < 540 ? 518 + (y-430)*0.27 : 548 + (y-540)*0.7;
+  return x > cx - 4;
+}
+function buildDecor(){
+  const R = mulberry32(20261110);
+  const ink = '#2a1d14';
+  const blocks = [];  // zonas ocupadas por estructuras
+  const items = [];   // {y, s}
+  const ground = [];
+  const add = (y,s) => items.push({y,s});
+  const nearPath = (x,y,d) => SAMPLES.some(p => (p[0]-x)**2 + (p[1]-y)**2 < d*d);
+  const nearNode = (x,y,d) => NODES.some(n => ((n[0]-x)**2 + (n[1]-y)**2 < d*d) || (Math.abs(n[0]-x) < 62 && y > n[1]+18 && y < n[1]+64));
+  const blocked = (x,y,d=0) => blocks.some(b => (b[0]-x)**2 + (b[1]-y)**2 < (b[2]+d)**2);
+  const free = (x,y,dp,dn,db=0) => !nearPath(x,y,dp) && !nearNode(x,y,dn) && !blocked(x,y,db) && !inSea(x,y) && x>6 && x<594 && y>8 && y<1142;
+  const block = (x,y,r) => blocks.push([x,y,r]);
+
+  // ---- árboles ----
+  const pine = (x,y,s,c) => `<g transform="translate(${r1(x)} ${r1(y)}) scale(${r1(s)})"><ellipse cx="1" cy="1" rx="7" ry="2.2" fill="#000" opacity=".13"/><rect x="-1" y="-6" width="2" height="6" fill="#5a3f28"/><path d="M-7.5 -5 L0 -14 L7.5 -5Z M-6 -10 L0 -19 L6 -10Z M-4.5 -15 L0 -23 L4.5 -15Z" fill="${c}" stroke="#25261b" stroke-width=".7" stroke-linejoin="round"/></g>`;
+  const cedar = (x,y,s,c) => `<g transform="translate(${r1(x)} ${r1(y)}) scale(${r1(s)})"><ellipse cx="1" cy="1" rx="5" ry="1.8" fill="#000" opacity=".15"/><rect x="-.8" y="-4" width="1.6" height="4" fill="#4a3220"/><path d="M-4.6 -3 L0 -30 L4.6 -3Z" fill="${c}" stroke="#1d2418" stroke-width=".7"/><path d="M-3 -9 L0 -12 L3 -9 M-3.6 -15 L0 -18 L3.6 -15 M-2.6 -21 L0 -24 L2.6 -21" stroke="#1d2418" stroke-width=".6" fill="none"/></g>`;
+  const round = (x,y,s,c) => `<g transform="translate(${r1(x)} ${r1(y)}) scale(${r1(s)})"><ellipse cx="1" cy="1" rx="7" ry="2.2" fill="#000" opacity=".13"/><rect x="-1" y="-7" width="2" height="7" fill="#5a3f28"/><circle cx="-4" cy="-10" r="5.6" fill="${c}" stroke="#25261b" stroke-width=".7"/><circle cx="4" cy="-11" r="5.6" fill="${c}" stroke="#25261b" stroke-width=".7"/><circle cx="0" cy="-15.5" r="6" fill="${c}" stroke="#25261b" stroke-width=".7"/><circle cx="-1.5" cy="-17" r="2" fill="#fff" opacity=".18"/></g>`;
+  const PINES = ['#3f5a3a','#4c6b3f','#355036','#45603c'], CEDARS = ['#2f4a33','#28402c','#36533a'], ROUND = ['#5f7f45','#6b8a4a','#b8732a','#a2452a','#c99a3a','#58773f'], SNOWP = ['#4d6650','#5a7258'];
+  // ---- montañas ----
+  const mountain = (x,y,w,h,snow,hill) => {
+    if(hill){
+      return `<g><path d="M${r1(x-w/2)} ${r1(y)} Q${r1(x-w/4)} ${r1(y-h)} ${r1(x)} ${r1(y-h)} Q${r1(x+w/4)} ${r1(y-h)} ${r1(x+w/2)} ${r1(y)}Z" fill="#a7ad78" stroke="${ink}" stroke-width="1.1"/><path d="M${r1(x)} ${r1(y-h)} Q${r1(x+w/4)} ${r1(y-h)} ${r1(x+w/2)} ${r1(y)} L${r1(x+w*.08)} ${r1(y)}Z" fill="#8a9262"/><path d="M${r1(x-w*.15)} ${r1(y-h*.5)} q4 -3 8 0 M${r1(x+w*.12)} ${r1(y-h*.35)} q4 -3 8 0" stroke="${ink}" stroke-width=".7" fill="none" opacity=".5"/></g>`;
+    }
+    const px = x + (R()-.5)*w*.18, py = y - h;
+    const a1 = [x - w*.26, y - h*(.5 + R()*.15)], b1 = [x + w*.27, y - h*(.45 + R()*.15)];
+    const L = x - w/2, Rr = x + w/2;
+    const light = snow ? '#b9b4a6' : '#b0a283', dark = snow ? '#7f7b72' : '#7f7158';
+    let g = `<g><path d="M${r1(L)} ${r1(y)} L${r1(a1[0])} ${r1(a1[1])} L${r1(px)} ${r1(py)} L${r1(b1[0])} ${r1(b1[1])} L${r1(Rr)} ${r1(y)}Z" fill="${light}"/>`;
+    g += `<path d="M${r1(px)} ${r1(py)} L${r1(b1[0])} ${r1(b1[1])} L${r1(Rr)} ${r1(y)} L${r1(x+w*.06)} ${r1(y)} L${r1(px+w*.05)} ${r1(py+h*.45)}Z" fill="${dark}"/>`;
+    if(snow){
+      const t = .34, l = [px+(a1[0]-px)*t*1.6, py+(a1[1]-py)*t*1.6], r = [px+(b1[0]-px)*t*1.6, py+(b1[1]-py)*t*1.6];
+      g += `<path d="M${r1(px)} ${r1(py)} L${r1(l[0])} ${r1(l[1])} L${r1((l[0]+px)/2+2)} ${r1(l[1]-3)} L${r1(px-1)} ${r1(l[1]+4)} L${r1((r[0]+px)/2)} ${r1(r[1]-2)} L${r1(r[0])} ${r1(r[1])}Z" fill="#f6f4ee" stroke="${ink}" stroke-width=".5"/>`;
+    }
+    for(let i=0;i<3;i++){ const hx = x + w*(.08+R()*.25), hy = y - h*(.15+R()*.3); g += `<path d="M${r1(hx)} ${r1(hy)} l${r1(w*.08)} ${r1(h*.1)}" stroke="${ink}" stroke-width=".7" opacity=".45"/>`; }
+    g += `<path d="M${r1(L)} ${r1(y)} L${r1(a1[0])} ${r1(a1[1])} L${r1(px)} ${r1(py)} L${r1(b1[0])} ${r1(b1[1])} L${r1(Rr)} ${r1(y)}" fill="none" stroke="${ink}" stroke-width="1.3" stroke-linejoin="round"/></g>`;
+    return g;
+  };
+  // ---- casas y estructuras ----
+  const house = (x,y,s,thatch) => `<g transform="translate(${r1(x)} ${r1(y)}) scale(${s})"><ellipse cx="1" cy="1" rx="11" ry="2.5" fill="#000" opacity=".14"/><rect x="-8" y="-8" width="16" height="8" fill="#ead9b4" stroke="${ink}" stroke-width=".8"/><rect x="-2" y="-5" width="4" height="5" fill="#6a4a30"/><path d="M-11 -7 L-6 -15 L6 -15 L11 -7Z" fill="${thatch?'#9a7a4a':'#4a3a2e'}" stroke="${ink}" stroke-width=".8"/><path d="M-6 -15 L6 -15" stroke="${ink}" stroke-width="1.6"/></g>`;
+  const tent = (x,y,s) => `<g transform="translate(${r1(x)} ${r1(y)}) scale(${s})"><ellipse cx="0" cy="1" rx="10" ry="2.4" fill="#000" opacity=".14"/><path d="M-9 0 Q-9 -9 0 -12 Q9 -9 9 0Z" fill="#e9dcc0" stroke="${ink}" stroke-width=".8"/><path d="M-6 -5 Q0 -8 6 -5" stroke="#a24d2a" stroke-width="1.4" fill="none"/><path d="M-2 0 L-2 -5 L2 -5 L2 0Z" fill="#5a3a22"/><line x1="0" y1="-12" x2="0" y2="-16" stroke="${ink}" stroke-width=".8"/></g>`;
+  const mapHorse = (x,y,s,flip,c,graze) => `<g transform="translate(${r1(x)} ${r1(y)}) scale(${flip?-s:s} ${s}) translate(-50 -68)"><ellipse cx="45" cy="70" rx="34" ry="5" fill="#000" opacity=".12"/>${horseShape(c,graze)}</g>`;
+  const pagoda = (x,y) => { let g = `<g transform="translate(${x} ${y})"><ellipse cx="0" cy="2" rx="22" ry="5" fill="#000" opacity=".15"/><rect x="-14" y="-4" width="28" height="5" fill="#9a9488" stroke="${ink}" stroke-width=".8"/>`; for(let i=0;i<5;i++){ const yy=-4-i*12, w=17-i*2.2; g += `<rect x="${r1(-w*.6)}" y="${r1(yy-9)}" width="${r1(w*1.2)}" height="9" fill="#c9442f" stroke="${ink}" stroke-width=".7"/><path d="M${r1(-w-5)} ${r1(yy-8)} Q0 ${r1(yy-15)} ${r1(w+5)} ${r1(yy-8)} L${r1(w)} ${r1(yy-12)} L${r1(-w)} ${r1(yy-12)}Z" fill="#3a3530" stroke="${ink}" stroke-width=".7"/>`; } g += `<line x1="0" y1="-64" x2="0" y2="-80" stroke="#c9a24a" stroke-width="1.6"/><circle cx="0" cy="-70" r="1.5" fill="#c9a24a"/><circle cx="0" cy="-75" r="1.5" fill="#c9a24a"/></g>`; return g; };
+  const torii = (x,y,s) => `<g transform="translate(${x} ${y}) scale(${s})"><rect x="-9" y="-20" width="2.4" height="20" fill="#c9442f" stroke="${ink}" stroke-width=".5"/><rect x="6.6" y="-20" width="2.4" height="20" fill="#c9442f" stroke="${ink}" stroke-width=".5"/><path d="M-14 -22 Q0 -25 14 -22 L13 -19 Q0 -21.5 -13 -19Z" fill="#2a2420"/><rect x="-11" y="-17" width="22" height="2" fill="#c9442f"/></g>`;
+  const castle = (x,y) => {
+    let g = `<g transform="translate(${x} ${y})"><path d="M-88 34 Q-90 14 -70 8 L70 8 Q90 14 88 34 Q0 44 -88 34Z" fill="#9a9488" stroke="${ink}" stroke-width="1"/>`;
+    g += `<path d="M-84 30 L84 30" stroke="${ink}" stroke-width=".6" opacity=".5"/><rect x="-82" y="2" width="164" height="7" fill="#efe9dc" stroke="${ink}" stroke-width=".8"/><path d="M-86 3 L86 3 L80 -2 L-80 -2Z" fill="#3a3c42"/>`;
+    g += `<path d="M-30 8 L-24 -14 L24 -14 L30 8Z" fill="#a8a294" stroke="${ink}" stroke-width=".9"/>`;
+    const T = [[26,13],[21,12],[16,11],[11,10]]; let yy = -14;
+    T.forEach(([w,h],i) => { g += `<rect x="${-w*.8}" y="${yy-h}" width="${w*1.6}" height="${h}" fill="#f2ede2" stroke="${ink}" stroke-width=".8"/><rect x="${-w*.5}" y="${yy-h+3}" width="3" height="4" fill="${ink}"/><rect x="${w*.3}" y="${yy-h+3}" width="3" height="4" fill="${ink}"/><path d="M${-w-7} ${yy-h+3} Q0 ${yy-h-7} ${w+7} ${yy-h+3} L${w+1} ${yy-h-3} L${-w-1} ${yy-h-3}Z" fill="#3a3c42" stroke="${ink}" stroke-width=".8"/>${i===1?`<path d="M-6 ${yy-h-2} L0 ${yy-h-9} L6 ${yy-h-2}Z" fill="#3a3c42" stroke="${ink}" stroke-width=".6"/>`:''}`; yy -= h; });
+    g += `<path d="M-6 ${yy-3} l-3 -6 l4 3Z M6 ${yy-3} l3 -6 l-4 3Z" fill="#d4af37"/>`;
+    g += `<line x1="-60" y1="2" x2="-60" y2="-22" stroke="${ink}" stroke-width="1"/><path d="M-60 -22 L-46 -19 L-60 -15Z" fill="#4b2a6b"/><line x1="60" y1="2" x2="60" y2="-22" stroke="${ink}" stroke-width="1"/><path d="M60 -22 L74 -19 L60 -15Z" fill="#4b2a6b"/></g>`;
+    return g;
+  };
+  const ship = (x,y,s) => `<g transform="translate(${x} ${y}) scale(${s})"><path d="M-26 0 Q0 9 28 -3 L32 -12 L22 -8 L-22 -8 L-30 -14Z" fill="#4a2e1c" stroke="${ink}" stroke-width=".9"/><path d="M-22 -8 L22 -8" stroke="#c9a24a" stroke-width="1"/><line x1="-10" y1="-8" x2="-10" y2="-44" stroke="${ink}" stroke-width="1.2"/><line x1="8" y1="-8" x2="8" y2="-50" stroke="${ink}" stroke-width="1.2"/><line x1="22" y1="-9" x2="22" y2="-34" stroke="${ink}" stroke-width="1"/><path d="M-19 -40 Q-10 -34 -1 -40 L-1 -16 Q-10 -12 -19 -16Z M-2 -46 Q8 -39 18 -46 L18 -20 Q8 -15 -2 -20Z M17 -32 Q22 -28 27 -32 L27 -16 Q22 -14 17 -16Z" fill="#f2ead6" stroke="${ink}" stroke-width=".7"/><path d="M-2 -34 L18 -34 M8 -46 L8 -16" stroke="#b3362b" stroke-width="1.6"/><path d="M8 -50 L16 -48 L8 -46Z" fill="#b3362b"/></g>`;
+  const boat = (x,y,s) => `<g transform="translate(${x} ${y}) scale(${s})"><path d="M-10 0 Q0 4 10 0 L12 -3 L-12 -3Z" fill="#5a3a22" stroke="${ink}" stroke-width=".6"/><line x1="0" y1="-3" x2="0" y2="-16" stroke="${ink}" stroke-width=".8"/><path d="M0 -15 L8 -5 L0 -5Z" fill="#efe6d2" stroke="${ink}" stroke-width=".5"/></g>`;
+  const cart = (x,y) => `<g transform="translate(${x} ${y})"><rect x="-7" y="-9" width="12" height="6" fill="#8a5a2b" stroke="${ink}" stroke-width=".6"/><rect x="-6" y="-13" width="10" height="4" fill="#e9dcc0" stroke="${ink}" stroke-width=".5"/><circle cx="-4" cy="-2" r="2.6" fill="none" stroke="${ink}" stroke-width="1"/><circle cx="3" cy="-2" r="2.6" fill="none" stroke="${ink}" stroke-width="1"/><line x1="5" y1="-6" x2="11" y2="-5" stroke="${ink}" stroke-width=".8"/></g>`;
+
+  // ======== estructuras fijas ========
+  // Aldea de Kawamura
+  const [vx,vy] = NODES[0];
+  [[-62,-22,1.15,1],[-44,14,1,1],[52,-28,1.1,1],[66,8,1,0],[22,-54,1,1],[-18,-60,1.1,1],[88,-48,.95,1],[-86,-46,.9,1],[100,-14,.9,1],[-96,-8,.9,0]].forEach(([dx,dy,s,t]) => { add(vy+dy, house(vx+dx, vy+dy, s, t)); block(vx+dx, vy+dy-6, 12); });
+  // arrozales
+  const paddy = (x0,y0,cols,rows) => { for(let c=0;c<cols;c++) for(let r=0;r<rows;r++){ const x = x0 + c*24, y = y0 + r*15; ground.push(`<rect x="${x}" y="${y}" width="22" height="13" fill="${(c+r)%3===0?'#a9c08a':'#b8cc98'}" stroke="#6e7a4a" stroke-width=".7"/><path d="M${x+3} ${y+5} l5 0 M${x+11} ${y+9} l6 0" stroke="#e6efd8" stroke-width=".8"/>`); block(x+11, y+6, 10); } };
+  paddy(120, 1050, 5, 3);
+  paddy(372, 1002, 5, 4);
+  // cerezos en el camino
+  [[.25,18],[.42,-18],[.58,18],[.72,-16]].forEach(([t,o]) => { const p = bez(SEGS[0],t), q = bez(SEGS[0],t+.01); const dx=q[0]-p[0], dy=q[1]-p[1], L=Math.hypot(dx,dy)||1; const x=p[0]-dy/L*o, y=p[1]+dx/L*o; add(y, round(x,y,1.25,'#e9a9b6')); block(x,y-6,8); });
+  // campamento bandido
+  add(860, tent(92,860,1.1)); add(852, tent(116,850,1)); block(100,852,16);
+  add(870, `<g transform="translate(104 872)"><path d="M-4 0 L4 0 M-3 -2 L3 2 M3 -2 L-3 2" stroke="#4a2a18" stroke-width="1.4"/><path d="M0 -1 q-3 -5 0 -9 q2 4 1 6 q3 -2 2 -6 q4 6 -3 9Z" fill="#e8742a"/><path d="M1 -12 q-4 -6 0 -12 q4 -6 0 -12" stroke="#8a8478" stroke-width="2" fill="none" opacity=".5"/></g>`);
+  add(888, `<g transform="translate(70 888)"><line x1="0" y1="0" x2="0" y2="-22" stroke="${ink}" stroke-width="1"/><path d="M0 -22 L10 -20 L0 -16Z" fill="#2a2420"/></g>`);
+  // templo
+  add(782, pagoda(488,782)); block(488,760,24);
+  add(800, torii(372,800,1.1)); block(372,792,12);
+  add(808, `<g transform="translate(398 812)"><rect x="-2" y="-8" width="4" height="8" fill="#9a9488" stroke="${ink}" stroke-width=".5"/><rect x="-3.5" y="-11" width="7" height="3" fill="#6a665e"/></g>`);
+  // campamento nómada y corral
+  [[96,742,1.1],[124,756,1],[70,712,1],[218,742,1.1],[244,718,.95],[196,764,.9]].forEach(([x,y,s]) => { add(y, tent(x,y,s)); block(x,y-5,12); });
+  ground.push(`<path d="M250 760 L330 760 L330 800 L250 800Z" fill="none" stroke="#6a4a2a" stroke-width="1.3" stroke-dasharray="1 0"/><path d="M250 765 L330 765 M250 795 L330 795" stroke="#8a6a44" stroke-width=".8"/>`);
+  block(290,780,30);
+  // caballos (manadas)
+  const HC = ['#5a3a22','#2b2420','#e8e0d0','#8a5a2b','#6a4a30','#3a2c22'];
+  const herd = (cx,cy,n,rad) => { let placed=0, tries=0; while(placed<n && tries<200){ tries++; const x=cx+(R()-.5)*rad*2, y=cy+(R()-.5)*rad*1.2; if(!free(x,y,18,46)) continue; add(y, mapHorse(x,y,.27+R()*.05,R()<.5,HC[Math.floor(R()*HC.length)],R()<.4)); block(x-2,y-6,11); placed++; } };
+  [[268,782,4,28]].forEach(([x,y,n,r]) => { let placed=0; for(let i=0;i<n;i++){ const hx=262+i*16, hy=774+(i%2)*14; add(hy, mapHorse(hx,hy,.24,i%2===0,HC[i%HC.length],i%3===0)); } });
+  herd(90,640,5,34); herd(300,690,4,30); herd(340,620,6,36); herd(530,680,4,26); herd(260,600,3,24); herd(560,760,3,20);
+  // columna de suministros (fase 5)
+  [[478,560],[494,548],[510,537]].forEach(([x,y]) => { add(y, cart(x,y)); block(x,y-5,9); });
+  // feudo de Hosokawa
+  add(520, `<g transform="translate(300 520)"><ellipse cx="0" cy="3" rx="46" ry="7" fill="#000" opacity=".14"/><rect x="-40" y="-30" width="80" height="32" fill="none" stroke="#efe9dc" stroke-width="4"/><rect x="-40" y="-30" width="80" height="32" fill="none" stroke="${ink}" stroke-width="1"/><path d="M-43 -30 L43 -30 M-43 2 L43 2" stroke="#3a3c42" stroke-width="2"/><rect x="-18" y="-22" width="36" height="16" fill="#ead9b4" stroke="${ink}" stroke-width=".8"/><path d="M-26 -20 Q0 -36 26 -20 L22 -26 L-22 -26Z" fill="#3a3c42" stroke="${ink}" stroke-width=".8"/><rect x="-46" y="-12" width="8" height="10" fill="#7b1e1e" stroke="${ink}" stroke-width=".7"/><path d="M-48 -12 L-36 -12 L-38 -15 L-46 -15Z" fill="#3a3c42"/><line x1="30" y1="-30" x2="30" y2="-52" stroke="${ink}" stroke-width="1"/><path d="M30 -52 L44 -49 L30 -45Z" fill="#7b1e1e"/></g>`);
+  block(300,505,46);
+  paddy(330, 545, 3, 2);
+  // puerto de Sakai
+  ground.push(`<path d="M512 402 L566 402 M514 426 L560 426" stroke="#6a4a2a" stroke-width="4"/><path d="M512 402 L566 402 M514 426 L560 426" stroke="#a07a4a" stroke-width="2"/>`);
+  [[500,384,1.05,0],[492,446,1,0],[506,362,.9,1]].forEach(([x,y,s,t]) => { add(y, house(x,y,s,t)); block(x,y-6,12); });
+  add(476, ship(572,478,.95)); block(572,460,30);
+  add(338, boat(574,338,1)); add(372, boat(586,372,.9)); add(578, boat(578,578,1));
+  // dojo
+  add(282, `<g transform="translate(196 282)"><ellipse cx="0" cy="2" rx="22" ry="4" fill="#000" opacity=".14"/><rect x="-16" y="-12" width="32" height="12" fill="#ead9b4" stroke="${ink}" stroke-width=".8"/><path d="M-22 -10 Q0 -26 22 -10 L18 -18 L-18 -18Z" fill="#3a3530" stroke="${ink}" stroke-width=".8"/><path d="M-18 -18 Q0 -26 18 -18 L14 -20 L-14 -20Z" fill="#f6f4ee"/><rect x="-4" y="-8" width="8" height="8" fill="#5a3a22"/></g>`);
+  block(196,272,26);
+  add(300, torii(168,300,.9)); block(168,292,10);
+  // castillo
+  add(100, castle(298,72)); block(298,50,92); block(298,84,80);
+  // rosa de los vientos
+  ground.push(`<g transform="translate(556 120)" opacity=".85"><circle r="26" fill="#f1e6cc" stroke="${ink}" stroke-width="1"/><circle r="20" fill="none" stroke="${ink}" stroke-width=".5"/><path d="M0 -24 L5 0 L0 24 L-5 0Z" fill="${ink}"/><path d="M0 -24 L5 0 L-5 0Z" fill="#b3362b"/><path d="M-24 0 L0 4 L24 0 L0 -4Z" fill="${ink}" opacity=".6"/><text y="-30" text-anchor="middle" font-family="Yuji Syuku, serif" font-size="14" fill="${ink}">北</text></g>`);
+  block(556,120,34);
+
+  // ======== montañas por zonas ========
+  const mzones = [
+    {cx:52,cy:900,rx:48,ry:70,n:8,w:[34,56],h:[34,58]},
+    {cx:200,cy:850,rx:110,ry:34,n:10,w:[34,60],h:[30,52]},
+    {cx:540,cy:880,rx:56,ry:60,n:7,w:[40,60],h:[18,28],hill:true},
+    {cx:330,cy:900,rx:60,ry:30,n:5,w:[36,56],h:[16,24],hill:true},
+    {cx:150,cy:330,rx:150,ry:120,n:34,w:[40,80],h:[44,92],snow:true},
+    {cx:300,cy:40,rx:300,ry:34,n:26,w:[40,72],h:[36,66],snow:true},
+    {cx:520,cy:190,rx:60,ry:40,n:6,w:[36,56],h:[30,48]},
+    {cx:40,cy:600,rx:40,ry:60,n:6,w:[36,52],h:[30,46]},
+    {cx:560,cy:1010,rx:40,ry:60,n:5,w:[36,52],h:[18,26],hill:true}
+  ];
+  mzones.forEach(z => {
+    let placed=0, tries=0;
+    while(placed < z.n && tries < z.n*40){
+      tries++;
+      const x = z.cx + (R()*2-1)*z.rx, y = z.cy + (R()*2-1)*z.ry;
+      const w = z.w[0] + R()*(z.w[1]-z.w[0]), h = z.h[0] + R()*(z.h[1]-z.h[0]);
+      const pts = [[x,y],[x-w*.35,y-h*.3],[x+w*.35,y-h*.3],[x,y-h*.7],[x,y-h]];
+      if(pts.some(p => nearPath(p[0],p[1],16) || nearNode(p[0],p[1],48) || blocked(p[0],p[1],4) || inSea(p[0],p[1]))) continue;
+      add(y, mountain(x,y,w,h,z.snow,z.hill));
+      block(x, y-h*.4, Math.min(w,h)*.42);
+      placed++;
+    }
+  });
+
+  // ======== bosques ========
+  const fzones = [
+    {cx:400,cy:214,rx:160,ry:92,n:230,kind:'cedar'},
+    {cx:215,cy:965,rx:80,ry:46,n:46,kind:'pine'},
+    {cx:500,cy:705,rx:70,ry:46,n:46,kind:'mix'},
+    {cx:60,cy:520,rx:56,ry:80,n:44,kind:'mix'},
+    {cx:360,cy:340,rx:90,ry:48,n:50,kind:'mix'},
+    {cx:250,cy:236,rx:60,ry:50,n:30,kind:'snowpine'},
+    {cx:540,cy:960,rx:56,ry:90,n:46,kind:'mix'},
+    {cx:56,cy:1086,rx:56,ry:50,n:30,kind:'pine'},
+    {cx:430,cy:1110,rx:120,ry:26,n:20,kind:'mix'},
+    {cx:160,cy:450,rx:60,ry:30,n:20,kind:'mix'},
+    {cx:430,cy:470,rx:30,ry:26,n:12,kind:'pine'},
+    {cx:560,cy:830,rx:40,ry:60,n:20,kind:'pine'},
+    {cx:320,cy:720,rx:40,ry:20,n:8,kind:'round'}
+  ];
+  fzones.forEach(z => {
+    let placed=0, tries=0;
+    while(placed < z.n && tries < z.n*12){
+      tries++;
+      const a = R()*Math.PI*2, rr = Math.sqrt(R());
+      const x = z.cx + Math.cos(a)*z.rx*rr, y = z.cy + Math.sin(a)*z.ry*rr;
+      if(!free(x,y,13,40,3)) continue;
+      let t;
+      if(z.kind === 'cedar') t = cedar(x,y,.8+R()*.45,CEDARS[Math.floor(R()*3)]);
+      else if(z.kind === 'pine') t = pine(x,y,.85+R()*.4,PINES[Math.floor(R()*4)]);
+      else if(z.kind === 'snowpine') t = pine(x,y,.8+R()*.3,SNOWP[Math.floor(R()*2)]);
+      else if(z.kind === 'round') t = round(x,y,.8+R()*.3,ROUND[Math.floor(R()*ROUND.length)]);
+      else t = R()<.5 ? pine(x,y,.8+R()*.35,PINES[Math.floor(R()*4)]) : round(x,y,.8+R()*.35,ROUND[Math.floor(R()*ROUND.length)]);
+      add(y, t); block(x,y-5,3.5); placed++;
+    }
+  });
+  // árboles sueltos
+  for(let i=0;i<70;i++){ const x=10+R()*580, y=80+R()*1060; if(!free(x,y,14,44,6)) continue; add(y, R()<.5?pine(x,y,.9,PINES[i%4]):round(x,y,.9,ROUND[i%ROUND.length])); block(x,y-5,4); }
+
+  // ======== suelo: hierba ========
+  let grass = '';
+  for(let i=0;i<520;i++){ const x=R()*600, y=R()*1150; if(inSea(x,y) || nearNode(x,y,30)) continue; grass += `<path d="M${r1(x-2.5)} ${r1(y)} l2.5 -4.5 l2.5 4.5" stroke="#6d7a4a" stroke-width=".8" fill="none" opacity="${r1(.35+R()*.35)}"/>`; }
+
+  // ======== composición ========
+  const rivers = [
+    [[64,345],[112,412],[190,446],[290,456],[380,480],[452,488],[528,468]],
+    [[0,1004],[90,1052],[180,1110],[300,1128],[430,1118],[530,1100],[610,1090]]
+  ];
+  let riv = '';
+  rivers.forEach(pts => { const d = crSegments(pts).map((s,i)=> i===0 ? segD(s) : segD(s).replace(/^M[^C]*/,'')).join(' '); riv += `<path d="${d}" stroke="#55777e" stroke-width="12" fill="none" stroke-linecap="round"/><path d="${d}" stroke="#9cc0c4" stroke-width="9" fill="none" stroke-linecap="round"/><path d="${d}" stroke="#e1efee" stroke-width="1.4" fill="none" stroke-dasharray="6 9" opacity=".8"/>`; });
+
+  let out = `<defs>
+    <filter id="paper" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="4"/><feColorMatrix values="0 0 0 0 .32  0 0 0 0 .25  0 0 0 0 .16  0 0 0 .28 0"/></filter>
+    <filter id="fibers" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".012 .03" numOctaves="3" seed="9"/><feColorMatrix values="0 0 0 0 .55  0 0 0 0 .42  0 0 0 0 .25  0 0 0 .22 0"/></filter>
+    <radialGradient id="vig" cx=".5" cy=".5" r=".75"><stop offset=".6" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#3a2410" stop-opacity=".45"/></radialGradient>
+    <pattern id="waves" width="24" height="12" patternUnits="userSpaceOnUse"><path d="M0 12 A12 12 0 0 1 24 12" fill="none" stroke="#e8f0ec" stroke-width="1.1" opacity=".7"/><path d="M4 12 A8 8 0 0 1 20 12" fill="none" stroke="#e8f0ec" stroke-width=".9" opacity=".5"/><path d="M-12 6 A12 12 0 0 1 12 6 M12 6 A12 12 0 0 1 36 6" fill="none" stroke="#e8f0ec" stroke-width="1.1" opacity=".7"/></pattern>
+  </defs>
+  <rect width="600" height="1150" fill="#eadcb8"/>
+  <rect width="600" height="1150" filter="url(#fibers)"/>
+  <ellipse cx="300" cy="660" rx="270" ry="120" fill="#b9b878" opacity=".33"/>
+  <ellipse cx="300" cy="1060" rx="300" ry="110" fill="#aebc7c" opacity=".3"/>
+  <ellipse cx="400" cy="214" rx="180" ry="105" fill="#6f8a5a" opacity=".22"/>
+  <ellipse cx="150" cy="320" rx="170" ry="130" fill="#f6f3ea" opacity=".55"/>
+  <ellipse cx="460" cy="820" rx="120" ry="80" fill="#b9b878" opacity=".25"/>
+  <path d="${SEA}" fill="#8fb0ad"/><path d="${SEA}" fill="url(#waves)" opacity=".8"/>
+  <path d="${SEA}" fill="none" stroke="#e6d6a8" stroke-width="7"/><path d="${SEA}" fill="none" stroke="#2a1d14" stroke-width="1.4"/>
+  ${riv}
+  <g>${grass}</g>
+  <g>${ground.join('')}</g>`;
+  return { base: out, items: items.sort((a,b) => a.y - b.y).map(i => i.s).join('') };
+}
+let DECOR = null;
+function mapDecorTop(){
+  // nubes, aves, cartela
+  const cloud = (x,y,s) => `<g transform="translate(${x} ${y}) scale(${s})" opacity=".9"><path d="M0 0 Q4 -12 16 -10 Q22 -20 34 -14 Q44 -22 54 -12 Q66 -12 66 0Z" fill="#f4ead2" stroke="#c9a24a" stroke-width="1.4"/><path d="M14 -4 q6 -6 12 0 M36 -6 q6 -6 12 0" stroke="#c9a24a" stroke-width="1" fill="none"/></g>`;
+  const birds = `<g stroke="#2a1d14" stroke-width="1.2" fill="none">${[[520,300],[536,290],[548,306],[566,296]].map(([x,y])=>`<path d="M${x-5} ${y} q2.5 -3 5 0 q2.5 -3 5 0"/>`).join('')}</g>`;
+  return cloud(20,190,1) + cloud(500,720,.9) + cloud(18,770,.8) + cloud(470,1000,1.1) + birds +
+   `<g transform="translate(14 14)"><rect width="196" height="52" rx="3" fill="#f4ead2" stroke="#2a1d14" stroke-width="1.4"/><rect x="4" y="4" width="188" height="44" rx="2" fill="none" stroke="#2a1d14" stroke-width=".6"/><rect x="10" y="10" width="32" height="32" rx="3" fill="#b3362b"/><text x="26" y="33" text-anchor="middle" font-family="Yuji Syuku, serif" font-size="20" fill="#f4ead2">揆</text><text x="52" y="27" font-family="Shippori Mincho, serif" font-weight="800" font-size="17" fill="#2a1d14">Tierras de Kawamura</text><text x="52" y="42" font-family="Noto Serif, serif" font-size="11" fill="#5a4a38">Mapa de la rebelión</text></g>`;
+}
+function pathLayer(){
+  const nx = nextId();
+  let base = '', top = '';
+  SEGS.forEach((s,i) => {
+    const d = segD(s);
+    base += `<path d="${d}" stroke="#2a1d14" stroke-width="9" fill="none" stroke-linecap="round" opacity=".25"/><path d="${d}" stroke="#d8c59a" stroke-width="7" fill="none" stroke-linecap="round"/>`;
+    const from = PH[i].id, to = PH[i+1].id;
+    if(done(to)) top += `<path d="${d}" stroke="#b3362b" stroke-width="3" fill="none" stroke-dasharray="8 4" stroke-linecap="round"/>`;
+    else if(done(from) && to === nx) top += `<path class="march" d="${d}" stroke="#b3362b" stroke-width="3" fill="none" stroke-dasharray="8 4" stroke-linecap="round"/>`;
+    else top += `<path d="${d}" stroke="#2a1d14" stroke-width="1.6" fill="none" stroke-dasharray="3 6" opacity=".55" stroke-linecap="round"/>`;
+  });
+  return base + top;
+}
+function nodesLayer(){
+  const nx = nextId();
+  let s = '';
+  PH.forEach((f,i) => {
+    const {x,y,etiqueta} = f.mapa;
+    const st = done(f.id) ? 'done' : (f.id === nx ? 'current' : 'locked');
+    const label = st === 'locked' ? '· · ·' : etiqueta;
+    const w = Math.max(54, label.length*9 + 20);
+    const fill = st === 'done' ? '#b3362b' : st === 'current' ? '#f4ead2' : '#8a8170';
+    const tc = st === 'done' ? '#f4ead2' : st === 'current' ? '#b3362b' : '#4a443a';
+    s += `<g class="node ${st}" data-id="${f.id}" transform="translate(${x} ${y})" tabindex="${st==='locked'?-1:0}">
+      <circle r="40" fill="transparent"/>
+      ${st==='current' ? `<circle class="halo" r="33" fill="none" stroke="#c9a24a" stroke-width="4"/>` : ''}
+      <circle r="25" cy="2" fill="#000" opacity=".25"/>
+      <circle r="25" fill="${fill}" stroke="#2a1d14" stroke-width="2.5"/>
+      <circle r="20.5" fill="none" stroke="${st==='done'?'#f4ead2':'#2a1d14'}" stroke-width="1" opacity=".55"/>
+      <text y="8.5" text-anchor="middle" font-family="Yuji Syuku, Shippori Mincho, serif" font-size="23" fill="${tc}">${KANJI[i]}</text>
+      ${st==='done' ? `<g transform="translate(19 -19)"><circle r="8" fill="#f4ead2" stroke="#2a1d14" stroke-width="1.2"/><path d="M-4 0 L-1 3 L4 -3" stroke="#2f6a3a" stroke-width="2" fill="none" stroke-linecap="round"/></g>` : ''}
+      <g transform="translate(0 44)"><rect x="${-w/2}" y="-13" width="${w}" height="24" rx="3" fill="${st==='locked'?'#d9cdb0':'#f4ead2'}" stroke="#2a1d14" stroke-width="1.3"/><text y="4.5" text-anchor="middle" font-size="15.5" font-weight="800" fill="#2a1d14" font-family="Shippori Mincho, Noto Serif, serif">${esc(label)}</text></g>
+    </g>`;
+  });
+  // estandarte del jugador
+  const cur = nx ? PH.find(f=>f.id===nx) : PH[PH.length-1];
+  const {x,y} = cur.mapa;
+  s += `<g transform="translate(${x+24} ${y-22})" pointer-events="none"><line x1="0" y1="10" x2="0" y2="-34" stroke="#2a1d14" stroke-width="2"/><path d="M0 -34 L16 -34 L16 -8 L0 -8Z" fill="#b3362b" stroke="#2a1d14" stroke-width="1"/><circle cx="8" cy="-21" r="4.5" fill="#f4ead2"/><path d="M0 -36 L16 -36" stroke="#2a1d14" stroke-width="2"/></g>`;
+  return s;
+}
+function renderMap(){
+  if(!DECOR) DECOR = buildDecor();
+  $('#map').innerHTML = `<svg id="mapsvg" viewBox="0 0 600 1150" xmlns="http://www.w3.org/2000/svg">${DECOR.base}${pathLayer()}${DECOR.items}${mapDecorTop()}${nodesLayer()}
+    <rect width="600" height="1150" filter="url(#paper)" pointer-events="none"/><rect width="600" height="1150" fill="url(#vig)" pointer-events="none"/>
+    <rect x="3" y="3" width="594" height="1144" fill="none" stroke="#2a1d14" stroke-width="3" pointer-events="none"/><rect x="9" y="9" width="582" height="1132" fill="none" stroke="#2a1d14" stroke-width="1" pointer-events="none"/></svg>`;
+  document.querySelectorAll('#mapsvg .node').forEach(n => {
+    const go = () => onNode(+n.dataset.id);
+    n.addEventListener('click', go);
+    n.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' '){ e.preventDefault(); go(); } });
+  });
+  const c = S.completadas.length;
+  $('#map-progress').textContent = c >= PH.length ? 'Campaña completada · 10/10' : `Fase ${nextId()} de ${PH.length} · ${c} conquistadas${S.jugadores>1?` · Coop ${S.jugadores} jugadores`:''}`;
+}
+function showMap(){
+  show('s-map');
+  renderMap();
+  requestAnimationFrame(() => {
+    const n = document.querySelector('#mapsvg .node.current') || document.querySelector(`#mapsvg .node[data-id="${PH.length}"]`);
+    if(n){ const r = n.getBoundingClientRect(); window.scrollTo({ top: Math.max(0, window.scrollY + r.top - window.innerHeight*0.5), behavior:'smooth' }); }
+  });
+}
+function onNode(id){
+  const f = PH.find(p => p.id === id);
+  if(done(id)) return showBrief(f);
+  if(id === nextId()) return playDialog(f.dialogo_intro, sceneFor(f), () => showBrief(f), 'batalla');
+  toast('Aún no has llegado hasta aquí.');
+}
+
+/* =========================================================
+   Preparación de batalla
+   ========================================================= */
+function enemyValue(f){ return f.enemigo.reduce((a,e) => a + ((U[e.unidad]||{}).coste||0)*e.cantidad, 0); }
+function showBrief(f){
+  const el = $('#s-brief');
+  const j = f.jugador, np = S.jugadores || 1;
+  const prev = PH.find(p => p.id === f.id-1);
+  const nuevas = prev && prev.desbloquea ? prev.desbloquea.unidades : [];
+  const ev = enemyValue(f), nEnemy = f.enemigo.reduce((a,e)=>a+e.cantidad,0);
+  const maxV = Math.max(ev, j.fondos);
+  const ratio = ev / j.fondos;
+  const c = f.condiciones;
+  const asedio = /asedio/i.test(c.tipo);
+  const per = np > 1 ? `<em>Por jugador: ${fmt(Math.floor(j.fondos/np))} koku</em>` : `<em>+ tu general a caballo</em>`;
+  const perU = np > 1 ? `<em>Por jugador: ${Math.max(1,Math.floor(j.max_unidades/np))} + su general</em>` : `<em>sin contar al general</em>`;
+  let rules = '';
+  (j.obligatorias||[]).forEach(o => rules += `<div class="rule"><b>Obligatorio:</b> al menos ${o.minimo}× ${esc(o.unidad)} (${esc(U[o.unidad].es.toLowerCase())})${np>1?' entre todos los jugadores':''}.</div>`);
+  if(j.restriccion_extra) rules += `<div class="rule"><b>Restricción:</b> ${esc(j.restriccion_extra)}.</div>`;
+  const gen = unitCard('General', {});
+  el.innerHTML = `
+  <div class="brief-hero"><div class="scene-bg" id="brief-scene"></div><button class="back" id="br-back">‹ Mapa</button><button class="mbtn float"></button>
+    <div class="in"><div class="fase">Fase ${f.id} de ${PH.length}${done(f.id)?' · conquistada':''}</div><h2 class="h">${esc(f.titulo)}</h2></div></div>
+  <div class="page">
+    <p class="story">${esc(f.historia)}</p>
+    <div class="chips"><span class="chip">${esc(c.estacion)}</span><span class="chip">${esc(c.hora)}</span><span class="chip">${esc(c.tipo)}</span><span class="chip">IA: ${esc(D.reglas_generales.dificultad_recomendada)}</span>${np>1?`<span class="chip">Coop · ${np} jugadores</span>`:''}</div>
+    <div class="res">
+      <div class="card"><small>Tus fondos</small><b>${fmt(j.fondos)}</b> koku${per}</div>
+      <div class="card"><small>Máx. unidades</small><b>${j.max_unidades}</b>${perU}</div>
+    </div>
+    <div class="balance">
+      <div>Tu ejército: <b>${fmt(j.fondos)}</b> koku</div><div class="bar"><i style="width:${r1(j.fondos/maxV*100)}%;background:#2f6a3a"></i></div>
+      <div>Enemigo: <b>${nEnemy}</b> unidades · ≈ <b>${fmt(ev)}</b> koku + su general</div><div class="bar"><i style="width:${r1(ev/maxV*100)}%;background:#b3362b"></i></div>
+      <div style="color:#5a4a38">${ratio > 1.15 ? `Desventaja: el enemigo vale unas <b>${r1(ratio)}×</b> tu ejército.` : ratio < .9 ? 'Tienes algo más de fondos, pero ellos eligen el terreno.' : 'Fuerzas parecidas: ganará quien mejor maniobre.'}</div>
+    </div>
+    ${rules}
+    <h3 class="sec h">Tus unidades <small>${j.unidades_disponibles.length} ${j.unidades_disponibles.length===1?'tipo':'tipos'} + general</small></h3>
+    <div class="grid" id="g-mine">${gen}${j.unidades_disponibles.map(u => unitCard(u, {isNew: nuevas.includes(u)})).join('')}</div>
+    <h3 class="sec h">Ejército enemigo <small>${nEnemy} unidades</small></h3>
+    <div class="grid" id="g-enemy">${f.enemigo.map(e => unitCard(e.unidad, {enemy:true, count:e.cantidad})).join('')}</div>
+    <details class="hint"><summary>Consejo del sensei</summary><p>${esc(f.pista)}</p></details>
+    <details class="howto"><summary>Cómo prepararla en Shogun 2</summary><ol>
+      <li>${np>1?'Multijugador → Batalla personalizada, con tus aliados en tu bando y la IA en el contrario.':'Menú principal → Batalla personalizada.'}</li>
+      <li>Tipo de batalla: <b>${asedio?'Asedio':'Terrestre'}</b>. Elige un mapa que encaje con «${esc(c.tipo)}».</li>
+      <li>Estación: <b>${esc(c.estacion)}</b>. Momento del día: <b>${esc(c.hora)}</b> (si no existe esa opción, la más parecida).</li>
+      <li>Fondos: los suficientes para tu general + <b>${fmt(j.fondos)}</b> koku de tropas${np>1?` (${fmt(Math.floor(j.fondos/np))} por jugador)`:''}. Máximo <b>${j.max_unidades}</b> unidades además del general.</li>
+      <li>Solo puedes reclutar las unidades de «Tus unidades».</li>
+      <li>IA en dificultad <b>${esc(D.reglas_generales.dificultad_recomendada)}</b> con exactamente el ejército enemigo de arriba (general a caballo incluido).</li>
+      <li>Cuando termines, vuelve aquí y marca el resultado.</li></ol></details>
+    <div class="actions">
+      <button class="btn" id="br-win">He ganado</button>
+      <button class="btn alt" id="br-lose" style="color:var(--ink)">He perdido</button>
+    </div>
+  </div>`;
+  show('s-brief');
+  setScene($('#brief-scene'), sceneFor(f));
+  bindCards(el);
+  $('#br-back').onclick = showMap;
+  $('#br-win').onclick = () => onWin(f);
+  $('#br-lose').onclick = () => playDialog(D.dialogo_derrota, sceneFor(f), () => showBrief(f));
+}
+function onWin(f){
+  if(done(f.id)){ toast('Victoria registrada. ¡Bien jugado!'); return showMap(); }
+  S.completadas.push(f.id); save();
+  playDialog(f.dialogo_victoria, sceneFor(f), () => {
+    if(f.desbloquea) showUnlock(f);
+    else if(f.id === PH[PH.length-1].id) playDialog(D.epilogo, {lugar:'aldea',est:'Primavera',hora:'Día'}, showEnd);
+    else showMap();
+  });
+}
+function showUnlock(f){
+  const el = $('#s-unlock');
+  el.innerHTML = `<div class="scene-bg" id="un-scene"></div><button class="mbtn float"></button><div class="center">
+    <div class="k" style="font-size:40px;color:var(--gold);text-shadow:0 2px 8px #000">${KANJI[f.id-1]}</div>
+    <h2 class="h">¡Nuevas tropas!</h2>
+    <p>${esc(f.desbloquea.motivo)}</p>
+    <div class="unlock-cards">${f.desbloquea.unidades.map(u => unitCard(u,{isNew:true})).join('')}</div>
+    <p style="font-size:14.5px;opacity:.85">Podrás usarlas en todas las fases siguientes.</p>
+    <button class="btn gold" id="un-go">Continuar</button></div>`;
+  show('s-unlock');
+  setScene($('#un-scene'), {lugar:f.lugar, est:f.condiciones.estacion, hora:'Noche'});
+  bindCards(el);
+  $('#un-go').onclick = showMap;
+}
+function showEnd(){
+  const el = $('#s-end');
+  el.innerHTML = `<div class="scene-bg" id="end-scene"></div><button class="mbtn float"></button><div class="center">
+    <div class="stamp k" style="width:120px;height:120px;font-size:58px">一揆</div>
+    <h2 class="h" style="margin-top:20px">La rebelión ha triunfado</h2>
+    <p>Has conquistado las ${PH.length} fases. Kawamura es libre.</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center"><button class="btn gold" id="end-map">Ver el mapa</button><button class="btn alt" id="end-new">Nueva partida</button></div></div>`;
+  show('s-end');
+  setScene($('#end-scene'), {lugar:'castillo',est:'Primavera',hora:'Amanecer'});
+  $('#end-map').onclick = showMap;
+  $('#end-new').onclick = newGame;
+}
+
+/* =========================================================
+   Modales: unidad, ejército, ajustes
+   ========================================================= */
+function openModal(html){ $('#sheet').innerHTML = `<button class="x" aria-label="Cerrar">✕</button>` + html; $('#modal').classList.remove('hidden'); $('#sheet .x').onclick = closeModal; }
+function closeModal(){ $('#modal').classList.add('hidden'); }
+$('#modal').addEventListener('click', e => { if(e.target.id === 'modal') closeModal(); });
+function openUnit(name){
+  const u = U[name]; if(!u) return;
+  const cost = u.coste ? `≈ ${fmt(u.coste)} koku${u.coste_estimado?' (estimado)':''}` : 'Incluido';
+  const clase = {ashigaru:'Ashigaru',samurai:'Samurái',monje:'Monjes',caballeria:'Caballería',general:'General'}[u.clase];
+  openModal(`<h3 class="h">${esc(name)}</h3>
+    <div class="udetail"><div class="art">${unitArt(name)}</div><div>
+      <div style="font-weight:700">${esc(u.es)}</div>
+      <div style="font-size:13.5px;color:#5a4a38;margin:3px 0 8px">${clase} · ${cost}</div>
+      <p style="margin:0;font-size:15px">${esc(u.descripcion)}</p></div></div>
+    ${name !== 'General' ? `<div class="set" style="margin-top:14px"><h4>Imagen</h4><p>Puedes poner la tarjeta de unidad del juego (PNG, JPG o WebP).</p>
+      <label class="btn small filebtn">Elegir imagen<input type="file" accept="image/*" id="one-img"></label>
+      ${IMGS[name] ? ' <button class="btn small alt" id="del-img" style="color:var(--ink)">Quitar</button>' : ''}</div>` : ''}`);
+  const inp = $('#one-img');
+  if(inp) inp.onchange = async () => { const f = inp.files[0]; if(!f) return; try{ IMGS[name] = await fileToDataURL(f); if(!saveImgs()) toast('La imagen se verá ahora, pero no se ha podido guardar.'); openUnit(name); refreshCurrent(); }catch(e){ toast('No se ha podido leer esa imagen.'); } };
+  const del = $('#del-img');
+  if(del) del.onclick = () => { delete IMGS[name]; saveImgs(); openUnit(name); refreshCurrent(); };
+}
+function refreshCurrent(){
+  const a = document.querySelector('.screen.active');
+  if(!a) return;
+  if(a.id === 's-brief'){ const t = a.querySelector('.fase'); const id = t ? parseInt(t.textContent.match(/\d+/)[0]) : null; if(id){ const y = window.scrollY; showBrief(PH.find(p=>p.id===id)); window.scrollTo(0,y); } }
+}
+function openArmy(){
+  const have = unlockedUnits();
+  const all = Object.keys(U).filter(k => k !== 'General');
+  const locked = all.filter(k => !have.includes(k));
+  openModal(`<h3 class="h">Tu ejército</h3><p style="margin:0 0 12px;font-size:14px;color:#4a3c2e">${have.length} de ${all.length} tipos de unidad desbloqueados. Toca una tarjeta para ver los detalles.</p>
+    <div class="grid">${unitCard('General')}${have.map(u => unitCard(u)).join('')}${locked.map(u => unitCard(u,{locked:true})).join('')}</div>`);
+  bindCards($('#sheet'));
+}
+function norm(s){ return String(s||'').toLowerCase().replace(/\.[a-z0-9]{2,5}$/,'').replace(/[^a-z0-9]/g,''); }
+function matchUnit(filename){
+  const f = norm(filename); let best = null, bestLen = 0;
+  for(const [name,u] of Object.entries(U)){
+    const cands = [name, u.es, u.clave, u.img ? u.img.split('/').pop() : ''].map(norm).filter(Boolean);
+    for(const c of cands){ if(f === c) return name; if(f.includes(c) && c.length > bestLen){ best = name; bestLen = c.length; } }
+  }
+  return best;
+}
+async function fileToDataURL(file){
+  const url = URL.createObjectURL(file);
+  try{
+    const img = await new Promise((res,rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = url; });
+    const sc = Math.min(1, 280/img.height);
+    const c = document.createElement('canvas'); c.width = Math.max(1,Math.round(img.width*sc)); c.height = Math.max(1,Math.round(img.height*sc));
+    c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+    let out = c.toDataURL('image/webp', .86);
+    if(!out.startsWith('data:image/webp')) out = c.toDataURL('image/png');
+    return out;
+  } finally { URL.revokeObjectURL(url); }
+}
+function openSettings(){
+  const nImgs = Object.keys(IMGS).length;
+  openModal(`<h3 class="h">Ajustes</h3>
+    <div class="set" style="border:0;padding-top:0"><h4>Jugadores (coop)</h4><p>Los fondos y el límite de unidades se reparten entre los jugadores.</p>
+      <div class="seg" id="seg-j">${[1,2,3,4].map(n => `<button data-n="${n}" class="${S.jugadores===n?'on':''}">${n}</button>`).join('')}</div></div>
+    <div class="set"><h4>Música</h4><p>Tema propio en el menú principal, tranquila en el mapa y la historia, y con taikos y más tensión al preparar la batalla.</p>
+      <div class="seg" id="seg-m"><button data-m="1" class="${S.musica?'on':''}">Activada</button><button data-m="0" class="${S.musica?'':'on'}">Silencio</button></div>
+      <input type="range" class="vol" id="vol" min="0" max="1" step="0.05" value="${S.volumen}" aria-label="Volumen"></div>
+    <div class="set"><h4>Imágenes de las unidades</h4>
+      <p>Las tarjetas usan dibujos propios. Si abres este archivo en tu ordenador con conexión, intenta cargar las tarjetas reales desde shogun2-encyclopedia.com. También puedes subir las tuyas (PNG/JPG/WebP): se asignan por el nombre del archivo, por ejemplo <i>katana_samurai.png</i> o <i>samurai_inf_katana_samurai.png</i>.</p>
+      <label class="btn small filebtn">Subir imágenes<input type="file" accept="image/*" multiple id="many-img"></label>
+      ${nImgs ? ` <button class="btn small alt" id="clr-img" style="color:var(--ink)">Borrar las ${nImgs}</button>` : ''}
+      <div class="imgstat" id="imgstat">${nImgs ? `${nImgs} imágenes propias guardadas.` : ''}</div></div>
+    <div class="set"><h4>Avance</h4>
+      <p>Fases conquistadas: <b>${S.completadas.length} de ${PH.length}</b>. ${storageOK() ? 'Se guarda solo en este navegador cada vez que avanzas.' : '<b>Este navegador no permite guardar:</b> descarga el avance para no perderlo.'} Para hacer una copia o seguir en otro dispositivo, descárgalo como JSON y súbelo allí.</p>
+      ${nImgs ? `<label class="chk"><input type="checkbox" id="exp-img"> Incluir mis ${nImgs} imágenes de unidades</label>` : ''}
+      <div class="row"><button class="btn small gold" id="exp-dl">Descargar JSON</button><button class="btn small alt" id="exp-cp" style="color:var(--ink)">Copiar JSON</button><label class="btn small filebtn">Subir JSON<input type="file" accept="application/json,.json,text/plain" id="imp-file"></label></div>
+      <details class="paste"><summary>Pegar el JSON como texto</summary><textarea id="imp-text" rows="5" placeholder='{"juego":"Ikki", "completadas":[1,2,3] ...}'></textarea><button class="btn small" id="imp-go">Leer texto</button></details>
+      <div class="imgstat" id="imp-msg"></div></div>
+    <div class="set"><h4>Partida</h4>
+      <div class="row"><button class="btn small alt" id="unl-all" style="color:var(--ink)">Desbloquear todo (pruebas)</button><button class="btn small" id="reset">Reiniciar partida</button></div></div>`);
+  document.querySelectorAll('#seg-j button').forEach(b => b.onclick = () => { S.jugadores = +b.dataset.n; save(); openSettings(); refreshAfterSettings(); });
+  document.querySelectorAll('#seg-m button').forEach(b => b.onclick = () => { const want = b.dataset.m === '1'; if(want !== S.musica) Music.toggle(); openSettings(); });
+  $('#vol').oninput = e => Music.setVolume(+e.target.value);
+  $('#many-img').onchange = async e => {
+    const files = [...e.target.files]; let ok = [], bad = [];
+    for(const f of files){ const u = matchUnit(f.name); if(!u){ bad.push(f.name); continue; } try{ IMGS[u] = await fileToDataURL(f); ok.push(u); }catch(err){ bad.push(f.name); } }
+    const saved = saveImgs();
+    openSettings(); refreshAfterSettings();
+    $('#imgstat').innerHTML = `${ok.length ? `Asignadas: ${esc(ok.join(', '))}.` : ''} ${bad.length ? `<br>Sin asignar (renómbralas con el nombre de la unidad o asígnalas desde su tarjeta): ${esc(bad.join(', '))}.` : ''}${saved ? '' : '<br>No se han podido guardar en este navegador; se verán hasta que cierres la página.'}`;
+  };
+  const clr = $('#clr-img'); if(clr) clr.onclick = () => { IMGS = {}; saveImgs(); openSettings(); refreshAfterSettings(); };
+  $('#unl-all').onclick = () => { S.completadas = PH.map(f => f.id); save(); closeModal(); showMap(); };
+  const rs = $('#reset');
+  rs.onclick = () => { if(rs.dataset.sure){ newGame(); closeModal(); } else { rs.dataset.sure = 1; rs.textContent = '¿Seguro? Toca otra vez'; } };
+  bindProgress();
+}
+
+/* ---------- avance: exportar / importar ---------- */
+// Descargas dentro de la vista de Claude (si existe); en el archivo local se usa un enlace normal
+let DLNS = null;
+try{ if(window.claude && typeof window.claude.use === 'function') window.claude.use('downloads').then(ns => { DLNS = ns; }).catch(() => {}); }catch(e){}
+function storageOK(){ try{ localStorage.setItem('ikki_t','1'); localStorage.removeItem('ikki_t'); return true; }catch(e){ return false; } }
+function progressJSON(withImgs){
+  const ids = [...S.completadas].sort((a,b) => a-b);
+  const data = {
+    juego: 'Ikki · La rebelión de Kawamura', version: 1, fecha: new Date().toISOString(),
+    completadas: ids,
+    fases_conquistadas: ids.map(id => { const f = PH.find(p => p.id === id); return f ? `${id}. ${f.titulo}` : String(id); }),
+    siguiente_fase: nextId(),
+    unidades_desbloqueadas: unlockedUnits(),
+    jugadores: S.jugadores
+  };
+  if(withImgs) data.imagenes = IMGS;
+  return JSON.stringify(data, null, 2);
+}
+function bindProgress(){
+  const withImgs = () => { const c = $('#exp-img'); return !!(c && c.checked); };
+  const msg = $('#imp-msg');
+  $('#exp-dl').onclick = () => {
+    const txt = progressJSON(withImgs());
+    const filename = `ikki-avance-${new Date().toISOString().slice(0,10)}.json`;
+    if(DLNS){
+      DLNS.save({ filename, data: txt })
+        .then(() => { msg.textContent = 'Avance descargado.'; })
+        .catch(e => { msg.textContent = e && e.code === 'declined' ? 'Descarga cancelada.' : 'No se ha podido descargar aquí. Usa «Copiar JSON».'; });
+      return;
+    }
+    try{
+      const url = URL.createObjectURL(new Blob([txt], {type:'application/json'}));
+      const a = document.createElement('a'); a.href = url; a.download = filename;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 3000);
+      msg.innerHTML = 'Descarga iniciada. Si no aparece (algunas vistas previas bloquean las descargas), usa «Copiar JSON» y guárdalo en un archivo de texto.';
+    }catch(e){ msg.textContent = 'No se ha podido descargar aquí. Usa «Copiar JSON».'; }
+  };
+  $('#exp-cp').onclick = () => {
+    const txt = progressJSON(withImgs());
+    const fallback = () => { msg.innerHTML = 'No se ha podido copiar automáticamente. Selecciona el texto y cópialo:<textarea rows="6" readonly style="width:100%;margin-top:6px">' + esc(txt) + '</textarea>'; const ta = msg.querySelector('textarea'); ta.focus(); ta.select(); };
+    try{ navigator.clipboard.writeText(txt).then(() => { msg.textContent = 'Avance copiado al portapapeles.'; }, fallback); }catch(e){ fallback(); }
+  };
+  $('#imp-file').onchange = async e => {
+    const f = e.target.files[0]; if(!f) return;
+    try{ askImport(await f.text()); }catch(err){ msg.textContent = 'No se ha podido leer el archivo.'; }
+    e.target.value = '';
+  };
+  $('#imp-go').onclick = () => askImport($('#imp-text').value);
+}
+function parseProgress(txt){
+  let d;
+  try{ d = JSON.parse(txt); }catch(e){ throw new Error('El texto no es un JSON válido.'); }
+  if(!d || typeof d !== 'object' || !Array.isArray(d.completadas)) throw new Error('No parece un avance de Ikki: falta la lista «completadas».');
+  const valid = new Set(PH.map(f => f.id));
+  const comp = [...new Set(d.completadas.map(Number).filter(n => valid.has(n)))].sort((a,b) => a-b);
+  const out = { completadas: comp, fecha: d.fecha || null };
+  const j = Number(d.jugadores); if(j >= 1 && j <= 4) out.jugadores = Math.round(j);
+  if(d.imagenes && typeof d.imagenes === 'object'){
+    const im = {};
+    for(const [k,v] of Object.entries(d.imagenes)) if(U[k] && typeof v === 'string' && v.startsWith('data:image/')) im[k] = v;
+    if(Object.keys(im).length) out.imagenes = im;
+  }
+  return out;
+}
+function askImport(txt){
+  const msg = $('#imp-msg');
+  let d;
+  try{ d = parseProgress(txt); }catch(e){ msg.textContent = e.message; msg.scrollIntoView({block:'nearest'}); return; }
+  const when = d.fecha ? ` (guardado el ${new Date(d.fecha).toLocaleString('es-ES')})` : '';
+  const nIm = d.imagenes ? Object.keys(d.imagenes).length : 0;
+  msg.innerHTML = `<div class="rule" style="margin-top:8px">El archivo tiene <b>${d.completadas.length} de ${PH.length}</b> fases conquistadas${esc(when)}${nIm ? ` y ${nIm} imágenes` : ''}. Tu avance actual (${S.completadas.length} fases) se reemplazará.</div>
+    <div class="row"><button class="btn small" id="imp-ok">Cargar este avance</button><button class="btn small alt" id="imp-no" style="color:var(--ink)">Cancelar</button></div>`;
+  msg.scrollIntoView({block:'nearest', behavior:'smooth'});
+  $('#imp-no').onclick = () => { msg.textContent = ''; };
+  $('#imp-ok').onclick = () => {
+    S.completadas = d.completadas;
+    if(d.jugadores) S.jugadores = d.jugadores;
+    save();
+    if(d.imagenes){ Object.assign(IMGS, d.imagenes); saveImgs(); }
+    closeModal();
+    toast(`Avance cargado: ${d.completadas.length} de ${PH.length} fases.`);
+    showMap();
+  };
+}
+function refreshAfterSettings(){
+  const a = document.querySelector('.screen.active');
+  if(a && a.id === 's-map') renderMap();
+  else refreshCurrent();
+}
+
+/* =========================================================
+   Música (Web Audio, generada al momento: no usa archivos)
+   - "paz": koto (escala yo), shakuhachi y sho; lenta y con silencios.
+   - "batalla": taiko, shime-daiko, hyoshigi, ostinato de shamisen
+     y shakuhachi en escala in (miyako-bushi), más rápida.
+   ========================================================= */
+const Music = (() => {
+  let ctx = null, master = null, comp = null, conv = null, wet = null, an = null, noiseBuf = null, timer = null;
+  const buses = {};
+  let mode = 'paz';
+  const seq = { paz:{t:0,step:0,bar:0,idx:6,pat:null,fl:false}, batalla:{t:0,step:0,bar:0,idx:8}, menu:{t:0,step:0,bar:0} };
+  const cache = new Map();
+  const rnd = Math.random;
+  const pick = a => a[Math.floor(rnd()*a.length)];
+  const mtof = m => 440*Math.pow(2,(m-69)/12);
+  const scale = (pcs, lo, hi) => { const a = []; for(let m=lo;m<=hi;m++) if(pcs.includes(m%12)) a.push(m); return a; };
+  const YO = scale([2,4,7,9,11], 55, 86);  // re mi sol la si
+  const IN = scale([4,5,9,11,0], 52, 84);  // mi fa la si do
+  const STEP = { paz: 60/66/2, batalla: 60/104/4, menu: 60/92/2 };
+
+  function ensure(){
+    if(ctx) return true;
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if(!AC) return false;
+    try{ ctx = new AC(); }catch(e){ return false; }
+    master = ctx.createGain(); master.gain.value = 0;
+    comp = ctx.createDynamicsCompressor(); comp.threshold.value = -16; comp.ratio.value = 4; comp.attack.value = .005; comp.release.value = .25;
+    an = ctx.createAnalyser(); an.fftSize = 1024;
+    master.connect(comp); comp.connect(an); an.connect(ctx.destination);
+    conv = ctx.createConvolver(); conv.buffer = impulse(3.4);
+    wet = ctx.createGain(); wet.gain.value = .34;
+    conv.connect(wet); wet.connect(master);
+    for(const k of ['paz','batalla','menu']){ const g = ctx.createGain(); g.gain.value = 0; g.connect(master); g.connect(conv); buses[k] = g; }
+    noiseBuf = ctx.createBuffer(1, ctx.sampleRate, ctx.sampleRate);
+    const nd = noiseBuf.getChannelData(0); for(let i=0;i<nd.length;i++) nd[i] = rnd()*2-1;
+    timer = setInterval(tick, 40);
+    return true;
+  }
+  function impulse(sec){
+    const sr = ctx.sampleRate, n = Math.floor(sr*sec), b = ctx.createBuffer(2, n, sr);
+    for(let c=0;c<2;c++){ const d = b.getChannelData(c); for(let i=0;i<n;i++) d[i] = (rnd()*2-1)*Math.pow(1-i/n, 3.4); }
+    return b;
+  }
+  function noise(t, dur, filterType, freq, q, vel, decay){
+    const src = ctx.createBufferSource(); src.buffer = noiseBuf; src.loop = true;
+    const f = ctx.createBiquadFilter(); f.type = filterType; f.frequency.value = freq; f.Q.value = q;
+    const g = ctx.createGain(); g.gain.setValueAtTime(vel, t); g.gain.exponentialRampToValueAtTime(.0005, t+decay);
+    src.connect(f); f.connect(g);
+    src.start(t); src.stop(t+dur);
+    return g;
+  }
+
+  /* ---- cuerda pulsada (Karplus-Strong): koto y shamisen ---- */
+  function ks(freq, sec, bright){
+    const key = Math.round(freq*10) + '|' + sec + '|' + bright + '|' + (rnd()<.5?0:1);
+    if(cache.has(key)) return cache.get(key);
+    const sr = ctx.sampleRate, n = Math.floor(sr*sec), b = ctx.createBuffer(1, n, sr), d = b.getChannelData(0);
+    const N = Math.max(2, Math.round(sr/freq)), ring = new Float32Array(N);
+    for(let i=0;i<N;i++) ring[i] = rnd()*2-1;
+    const soft = bright > .6 ? 0 : 2;  // el koto se pulsa más suave que el shamisen
+    for(let p=0;p<soft;p++) for(let i=0;i<N;i++) ring[i] = (ring[i] + ring[(i+1)%N])*.5;
+    const dec = Math.pow(.001, 1/(sec*.9*freq)), a = bright, c = 1-bright;
+    let idx = 0, peak = 0;
+    for(let i=0;i<n;i++){
+      const cur = ring[idx], nx = ring[(idx+1)%N];
+      d[i] = cur; const ab = cur < 0 ? -cur : cur; if(ab > peak) peak = ab;
+      ring[idx] = dec*(a*cur + c*nx);
+      idx = (idx+1) % N;
+    }
+    const k = peak > 0 ? .9/peak : 1, fade = Math.floor(sr*.05);
+    for(let i=0;i<n;i++) d[i] *= k * (i > n-fade ? (n-i)/fade : 1);
+    cache.set(key, b);
+    return b;
+  }
+  function pluck(bus, t, midi, vel, o = {}){
+    const sec = o.sec || 2.6, bright = o.bright || .5;
+    const src = ctx.createBufferSource(); src.buffer = ks(mtof(midi), sec, bright);
+    if(o.bend){ src.playbackRate.setValueAtTime(1, t+.08); src.playbackRate.linearRampToValueAtTime(Math.pow(2, o.bend/12), t+.32); }
+    const g = ctx.createGain(); g.gain.setValueAtTime(vel, t);
+    if(o.stop){ g.gain.setValueAtTime(vel, t+o.stop); g.gain.exponentialRampToValueAtTime(.0006, t+o.stop+.12); }
+    src.connect(g);
+    if(ctx.createStereoPanner){ const p = ctx.createStereoPanner(); p.pan.value = o.pan != null ? o.pan : rnd()*.6-.3; g.connect(p); p.connect(bus); }
+    else g.connect(bus);
+    src.start(t); src.stop(t + (o.stop ? o.stop+.15 : sec));
+  }
+
+  /* ---- shakuhachi ---- */
+  function flute(bus, t, midi, dur, vel, o = {}){
+    const f = mtof(midi), scoop = o.scoop || .94, atk = o.atk || .3;
+    const o1 = ctx.createOscillator(), o2 = ctx.createOscillator(); o1.type = 'sine'; o2.type = 'triangle';
+    [o1,o2].forEach(x => {
+      x.frequency.setValueAtTime(f*scoop, t); x.frequency.exponentialRampToValueAtTime(f, t+.22);
+      if(o.bendTo){ x.frequency.setValueAtTime(f, t+dur*.55); x.frequency.exponentialRampToValueAtTime(mtof(o.bendTo), t+dur*.8); }
+    });
+    const lfo = ctx.createOscillator(), lg = ctx.createGain();
+    lfo.frequency.value = 4.6 + rnd()*.9;
+    lg.gain.setValueAtTime(0, t); lg.gain.linearRampToValueAtTime(f*.013, t+dur*.75);
+    lfo.connect(lg); lg.connect(o1.frequency); lg.connect(o2.frequency);
+    const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 2400;
+    const g = ctx.createGain(), g2 = ctx.createGain(); g2.gain.value = .2;
+    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vel, t+atk); g.gain.linearRampToValueAtTime(vel*1.15, t+dur*.65); g.gain.linearRampToValueAtTime(.0001, t+dur+.45);
+    o1.connect(g); o2.connect(g2); g2.connect(lp); lp.connect(g);
+    // soplo
+    const br = o.breath || .35;
+    const nsrc = ctx.createBufferSource(); nsrc.buffer = noiseBuf; nsrc.loop = true;
+    const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = f*1.6; bp.Q.value = .9;
+    const ng = ctx.createGain(); ng.gain.setValueAtTime(0, t); ng.gain.linearRampToValueAtTime(vel*br*1.6, t+.06); ng.gain.linearRampToValueAtTime(vel*br*.45, t+atk+.1); ng.gain.linearRampToValueAtTime(.0001, t+dur+.4);
+    nsrc.connect(bp); bp.connect(ng);
+    let out = ctx.createGain(); g.connect(out); ng.connect(out);
+    if(ctx.createStereoPanner){ const p = ctx.createStereoPanner(); p.pan.value = .15; out.connect(p); p.connect(bus); } else out.connect(bus);
+    const end = t + dur + .5;
+    [o1,o2,lfo,nsrc].forEach(x => { x.start(t); x.stop(end); });
+  }
+
+  /* ---- sho (acorde de fondo) ---- */
+  function sho(bus, t, mids, dur, vel){
+    mids.forEach(m => {
+      const o = ctx.createOscillator(); o.type = 'sawtooth'; o.frequency.value = mtof(m); o.detune.value = rnd()*8-4;
+      const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 1300;
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vel, t+dur*.35); g.gain.linearRampToValueAtTime(vel*.75, t+dur*.7); g.gain.linearRampToValueAtTime(0, t+dur);
+      o.connect(lp); lp.connect(g); g.connect(bus); o.start(t); o.stop(t+dur+.05);
+    });
+  }
+
+  /* ---- percusión ---- */
+  function drum(bus, t, kind, vel){
+    if(kind === 'o'){ // odaiko
+      const o = ctx.createOscillator(); o.type = 'sine';
+      o.frequency.setValueAtTime(118, t); o.frequency.exponentialRampToValueAtTime(44, t+.42);
+      const g = ctx.createGain(); g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(vel, t+.008); g.gain.exponentialRampToValueAtTime(.0006, t+1.4);
+      o.connect(g); g.connect(bus); o.start(t); o.stop(t+1.5);
+      noise(t, .2, 'lowpass', 700, .7, vel*.55, .14).connect(bus);
+    } else if(kind === 's'){ // shime-daiko
+      const o = ctx.createOscillator(); o.type = 'sine';
+      o.frequency.setValueAtTime(360, t); o.frequency.exponentialRampToValueAtTime(230, t+.05);
+      const g = ctx.createGain(); g.gain.setValueAtTime(vel, t); g.gain.exponentialRampToValueAtTime(.0006, t+.2);
+      o.connect(g); g.connect(bus); o.start(t); o.stop(t+.25);
+      noise(t, .08, 'bandpass', 2600, 1.2, vel*.7, .05).connect(bus);
+    } else if(kind === 'k'){ // hyoshigi (tablillas)
+      [1850, 2870].forEach((fr,i) => { const o = ctx.createOscillator(); o.frequency.value = fr; const g = ctx.createGain(); g.gain.setValueAtTime(vel*(i?.5:1), t); g.gain.exponentialRampToValueAtTime(.0005, t+.09); o.connect(g); g.connect(bus); o.start(t); o.stop(t+.1); });
+      noise(t, .06, 'bandpass', 3400, 5, vel*1.2, .04).connect(bus);
+    }
+  }
+
+  /* ---- composición: paz ---- */
+  const PZ = [[1,0,0,1,0,0,1,0],[1,0,1,0,0,0,1,0],[1,0,0,0,1,0,1,1],[1,1,0,0,1,0,0,0],[0,0,1,0,1,0,0,0],[1,0,0,0,0,0,0,0],[1,0,0,1,0,1,0,0]];
+  const SHO = [[62,64,69,71,74],[67,69,74,76],[64,67,71,74],[62,69,71,76]];
+  function stepPaz(s, t){
+    const bus = buses.paz, b = s.step % 8, bar = STEP.paz*8;
+    if(b === 0){
+      s.bar++;
+      s.pat = (s.bar > 1 && rnd() < .12) ? [0,0,0,0,0,0,0,0] : pick(PZ);
+      if(s.bar % 4 === 1) sho(bus, t, pick(SHO), bar*3, .011);
+      if(rnd() < .65) pluck(bus, t, pick([38,43,45,50]), .3, {sec:3.4, pan:0});
+      if(rnd() < .28){ const i = Math.min(s.idx, YO.length-5); [0,2,4].forEach((k,j) => pluck(bus, t+j*.055, YO[i+k], .26, {sec:2.6})); }
+      s.fl = s.bar % 8 >= 4 && s.bar % 8 <= 6;
+      if(s.bar % 8 === 4){
+        let j = 8 + Math.floor(rnd()*3), tt = t;
+        const durs = [STEP.paz*6, STEP.paz*4, STEP.paz*9];
+        durs.forEach((dd,n) => { flute(bus, tt, YO[Math.min(YO.length-1, j)], dd, .15, {bendTo: n===2 && rnd()<.4 ? YO[Math.max(0,j-1)] : 0}); tt += dd + STEP.paz*.6; j += pick([-1,-1,1,2,-2]); j = Math.max(7, Math.min(YO.length-1, j)); });
+      }
+    }
+    if(s.pat[b]){
+      if(s.fl && rnd() < .55) return;
+      s.idx += pick([-2,-1,-1,0,1,1,2]);
+      s.idx = Math.max(3, Math.min(YO.length-3, s.idx));
+      pluck(bus, t + rnd()*.02, YO[s.idx], .3 + rnd()*.22, {bend: rnd() < .07 ? 2 : 0});
+      if(rnd() < .08) pluck(bus, t+.01, YO[s.idx]-12, .18, {sec:3});
+    }
+    if(b === 6 && s.bar % 4 === 0) pluck(bus, t, pick([62,74]), .3, {sec:3.2});
+  }
+
+  /* ---- composición: batalla ---- */
+  const OST = [[52,52,53,52,52,52,57,53],[47,47,48,47,47,47,52,48],[52,52,53,57,59,57,53,52],[45,45,47,48,47,45,47,52]];
+  function stepBat(s, t){
+    const bus = buses.batalla, b = s.step % 16;
+    if(b === 0){
+      s.bar++;
+      s.fill = s.bar % 4 === 0;
+      s.mel = s.bar % 8 >= 5 || s.bar % 8 === 0;
+      s.ost = OST[Math.floor((s.bar-1)/2) % OST.length];
+      if(s.bar % 8 === 1){ drum(bus, t, 'k', .5); drum(bus, t+.12, 'k', .42); }
+      if((s.bar % 8 === 1 && s.bar > 1) || (s.bar % 8 === 5 && rnd() < .6)){
+        const [a,z] = pick([[71,72],[77,76],[72,71],[76,77]]);
+        flute(bus, t, a, STEP.batalla*24, .17, {atk:.07, scoop:.9, bendTo:z, breath:.8});
+      }
+    }
+    if(b === 0) drum(bus, t, 'o', .95);
+    else if(b === 6 || b === 8) drum(bus, t, 'o', .62);
+    else if((b === 10 && rnd() < .4) || (b === 14 && rnd() < .3)) drum(bus, t, 'o', .5);
+    if(b === 4 || b === 12) drum(bus, t, 's', .5);
+    else if((b === 2 || b === 10) && rnd() < .5) drum(bus, t, 's', .16);
+    if(s.fill && b >= 12) drum(bus, t, 's', .22 + (b-12)*.12);
+    if(b % 2 === 0) pluck(bus, t, s.ost[b/2], b % 4 === 0 ? .44 : .34, {bright:.78, sec:1.2, stop:.2, pan:-.25});
+    if(s.mel && (b % 4 === 0 || (b % 4 === 2 && rnd() < .3))){
+      s.idx += pick([-1,1,1,2,-2,-1]);
+      s.idx = Math.max(5, Math.min(IN.length-2, s.idx));
+      pluck(bus, t, IN[s.idx], .36, {bright:.55, sec:1.8, pan:.3, bend: rnd() < .1 ? 1 : 0});
+    }
+  }
+
+  /* ---- composición: menú principal (melodía fija, escala yo, más enérgica) ---- */
+  const MEL = [[0,69,2],[2,74,2],[4,76,2],[6,79,1],[7,76,1],[8,74,6],[14,71,1],[15,74,1],
+               [16,76,2],[18,79,2],[20,81,3],[23,79,1],[24,81,8],
+               [32,83,2],[34,81,2],[36,79,2],[38,76,2],[40,79,3],[43,76,1],[44,74,4],
+               [48,76,2],[50,74,1],[51,71,1],[52,69,2],[54,71,2],[56,74,8]];
+  const MEL_AT = {}; MEL.forEach(n => MEL_AT[n[0]] = n);
+  const ARP = { D:[50,57,62,57,64,57,62,57], G:[55,62,67,62,69,62,67,62], A:[57,64,69,64,71,64,69,64], E:[52,59,64,59,67,59,64,59] };
+  const PROG = ['D','D','G','A','G','E','A','D'];
+  function stepMenu(s, t){
+    const bus = buses.menu, d = STEP.menu, k = s.step - 16;   // 2 compases de introducción
+    if(k < 0){
+      const b = (k + 16) % 8;
+      if(k === -16){ drum(bus, t, 'k', .45); drum(bus, t+.1, 'k', .35); }
+      pluck(bus, t, ARP.D[b], b === 0 ? .32 : .2, {sec:1.6, pan:-.3});
+      if(b === 0) drum(bus, t, 'o', .4);
+      if(k >= -4) drum(bus, t, 's', .14 + (k+4)*.07);
+      return;
+    }
+    const st = k % 64, b = st % 8, bar = Math.floor(st/8), pass = Math.floor(k/64);
+    if(st === 0 && pass > 0){ drum(bus, t, 'k', .45); drum(bus, t+.1, 'k', .35); }
+    pluck(bus, t, ARP[PROG[bar]][b], b === 0 ? .34 : .22, {sec:1.6, pan:-.3});
+    if(b === 0) drum(bus, t, 'o', .55);
+    if(b === 2 || b === 6) drum(bus, t, 's', .3);
+    if((bar === 3 || bar === 7) && b >= 6) drum(bus, t, 'o', .42);
+    if(pass > 0 && (b === 3 || b === 7) && rnd() < .35) drum(bus, t, 's', .12);
+    const n = MEL_AT[st];
+    if(n){
+      const m = n[1], len = n[2];
+      if(pass % 2 === 0){
+        flute(bus, t, m, len*d*.95, .16, {atk: len > 3 ? .12 : .05, scoop:.96, breath:.45});
+      } else {
+        pluck(bus, t, m, .42, {sec:2.2, pan:.25});
+        if(len >= 4) for(let i=2;i<len;i+=2) pluck(bus, t+i*d, m, .2, {sec:1.6, pan:.25});
+        if(rnd() < .5) pluck(bus, t+.02, m-12, .2, {sec:2});
+      }
+    }
+  }
+
+  function tick(){
+    if(!ctx || ctx.state !== 'running') return;
+    const s = seq[mode], dur = STEP[mode];
+    if(s.t < ctx.currentTime) s.t = ctx.currentTime + .06;
+    const fn = mode === 'paz' ? stepPaz : mode === 'menu' ? stepMenu : stepBat;
+    while(s.t < ctx.currentTime + .3){ fn(s, s.t); s.t += dur; s.step++; }
+  }
+  function applyGains(){
+    if(!ctx) return;
+    const now = ctx.currentTime;
+    const LVL = { paz: 2.1, batalla: .85, menu: 1.35 };
+    for(const k in buses) buses[k].gain.setTargetAtTime(k === mode ? LVL[k] : 0, now, k === mode ? .7 : .45);
+    master.gain.setTargetAtTime(S.musica ? (S.volumen != null ? S.volumen : .6) * .9 : 0, now, .25);
+  }
+  function start(){
+    if(!S.musica) return;
+    if(!ensure()) return;
+    if(ctx.state === 'suspended') ctx.resume().then(updateMusicButtons).catch(() => {});
+    applyGains();
+    updateMusicButtons();
+  }
+  function setMode(m){
+    if(m === mode) return;
+    mode = m;
+    if(ctx){ const s = seq[m]; s.t = ctx.currentTime + .3; s.step = 0; s.bar = 0; applyGains(); }
+  }
+  function toggle(){
+    S.musica = !S.musica; save();
+    if(S.musica) start();
+    else if(ctx){ applyGains(); setTimeout(() => { if(!S.musica && ctx) ctx.suspend().catch(() => {}); }, 700); }
+    updateMusicButtons();
+  }
+  function setVolume(v){ S.volumen = v; save(); applyGains(); }
+  // Intento de arranque sin toque: funciona si el navegador lo permite; si no, arranca con el primer toque
+  function auto(){
+    if(!S.musica || !ensure()) return;
+    applyGains();
+    try{ const p = ctx.resume(); if(p && p.then) p.then(updateMusicButtons).catch(() => {}); }catch(e){}
+    setTimeout(updateMusicButtons, 400);
+  }
+  function level(){ if(!an) return 0; const a = new Float32Array(an.fftSize); an.getFloatTimeDomainData(a); let m = 0; for(const v of a) m = Math.max(m, Math.abs(v)); return m; }
+  document.addEventListener('visibilitychange', () => { if(!ctx) return; if(document.hidden) ctx.suspend().catch(() => {}); else if(S.musica) ctx.resume().catch(() => {}); });
+  return { start, auto, setMode, toggle, setVolume, level, get mode(){ return mode; }, get state(){ return ctx ? ctx.state : 'none'; } };
+})();
+const ICON_ON = '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>';
+const ICON_OFF = '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M16 9.5l5 5M21 9.5l-5 5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>';
+function updateMusicButtons(){
+  const tm = document.getElementById('tap-music');
+  if(tm) tm.classList.toggle('hide', !S.musica || Music.state === 'running');
+  document.querySelectorAll('.mbtn').forEach(b => { b.innerHTML = S.musica ? ICON_ON : ICON_OFF; b.setAttribute('aria-label', S.musica ? 'Silenciar música' : 'Activar música'); b.classList.toggle('off', !S.musica); });
+}
+document.addEventListener('click', e => { const b = e.target.closest('.mbtn'); if(b){ e.stopPropagation(); e.preventDefault(); Music.toggle(); } }, true);
+['pointerdown','touchend','keydown'].forEach(ev => document.addEventListener(ev, () => Music.start(), {capture:true, passive:true}));
+
+
+/* =========================================================
+   Arranque
+   ========================================================= */
+function newGame(){
+  S.completadas = []; save();
+  playDialog(D.prologo, {lugar:'aldea', est:'Otoño', hora:'Atardecer'}, showMap);
+}
+function showTitle(){
+  show('s-title');
+  setScene($('#title-scene'), {lugar:'castillo', est:'Otoño', hora:'Atardecer'});
+  $('#b-cont').style.display = S.completadas.length ? '' : 'none';
+}
+$('#b-new').onclick = () => { if(S.completadas.length && !$('#b-new').dataset.sure){ $('#b-new').dataset.sure = 1; $('#b-new').textContent = 'Se borrará tu progreso. ¿Seguro?'; return; } delete $('#b-new').dataset.sure; $('#b-new').textContent = 'Nueva partida'; newGame(); };
+$('#b-cont').onclick = showMap;
+$('#b-set1').onclick = openSettings;
+$('#b-set2').onclick = openSettings;
+$('#b-army').onclick = openArmy;
+$('#s-dialog').addEventListener('click', e => { if(e.target.closest('#dlg-skip')) return; nextLine(); });
+$('#dlg-skip').addEventListener('click', e => { e.stopPropagation(); skipDialog(); });
+document.addEventListener('keydown', e => {
+  if(!$('#modal').classList.contains('hidden') && e.key === 'Escape') return closeModal();
+  if($('#s-dialog').classList.contains('active') && (e.key === ' ' || e.key === 'Enter')){ e.preventDefault(); nextLine(); }
+});
+function showSplash(){
+  show('s-splash');
+  setScene($('#splash-scene'), {lugar:'templo', est:'Otoño', hora:'Noche'});
+}
+let leavingSplash = false;
+function leaveSplash(){
+  if(leavingSplash) return; leavingSplash = true;
+  Music.start();                       // este toque es el que permite al navegador reproducir sonido
+  const sp = $('#s-splash'); sp.classList.add('leaving');
+  setTimeout(() => { sp.classList.remove('leaving'); showTitle(); }, 450);
+}
+$('#s-splash').addEventListener('click', leaveSplash);
+document.addEventListener('keydown', e => { if($('#s-splash').classList.contains('active') && (e.key === 'Enter' || e.key === ' ')){ e.preventDefault(); leaveSplash(); } });
+load();
+showSplash();
+Music.auto();
+</script>
+</body>
+</html>
